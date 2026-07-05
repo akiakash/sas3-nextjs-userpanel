@@ -1,12 +1,29 @@
 "use client";
 
-import React from "react";
-import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import DashboardHeader from "@/components/layout/dashboard-header";
 import DashboardNavbar from "@/components/layout/dashboard-navbar";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="flex h-svh items-center justify-center bg-zinc-50 text-sm font-semibold text-zinc-500">
+        Loading your account...
+      </div>
+    );
+  }
 
   const getPageTitle = (path: string) => {
     if (path.includes("/dashboard/orders")) return "Order Ledger & Invoices";

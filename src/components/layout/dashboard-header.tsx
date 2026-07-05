@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { LogOut, User } from "lucide-react";
 import TopBar from "@/components/home/TopBar";
 import { Sas3Logo } from "@/components/layout/sas3-logo";
+import { useAuth } from "@/contexts/auth-context";
 
 const publicNav = [
   { label: "HOME", href: "/" },
@@ -14,6 +17,8 @@ const publicNav = [
 ];
 
 export function DashboardHeader() {
+  const { logout } = useAuth();
+
   return (
     <div className="shrink-0">
       <TopBar />
@@ -51,14 +56,15 @@ export function DashboardHeader() {
               <User size={18} />
             </Link>
 
-            <Link
-              href="/login"
+            <button
+              type="button"
+              onClick={logout}
               className="flex h-10 w-10 items-center justify-center rounded border border-gray-200 text-gray-800 transition hover:border-gray-300 hover:bg-gray-50"
               title="Sign out"
               aria-label="Sign out"
             >
               <LogOut size={18} />
-            </Link>
+            </button>
           </div>
         </div>
       </header>

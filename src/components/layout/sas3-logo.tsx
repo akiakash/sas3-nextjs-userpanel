@@ -18,15 +18,20 @@ export function Sas3Logo({
   priority = false,
 }: Sas3LogoProps) {
   const width = Math.round((height * 211) / 135);
+  const hasHeightClass = Boolean(className?.match(/\bh-(?:\[[^\]]+\]|[^\s]+)/));
 
   const img = (
     <img
       src={LOGO_SRC}
       alt="SAS3 Trading — Creating Value, Building Relationships"
-      width={width}
-      height={height}
+      width={hasHeightClass ? undefined : width}
+      height={hasHeightClass ? undefined : height}
       className={cn("max-w-none object-contain object-left", className)}
-      style={{ height, width, maxHeight: height }}
+      style={
+        hasHeightClass
+          ? { aspectRatio: "211 / 135", width: "auto" }
+          : { height, width, maxHeight: height }
+      }
       decoding="async"
       fetchPriority={priority ? "high" : "auto"}
     />

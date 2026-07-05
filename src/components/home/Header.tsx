@@ -12,8 +12,8 @@ type HeaderProps = {
 export default function Header({ activeAuth }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-white/70 shadow-sm backdrop-blur-xl">
-      <div className="mx-auto flex h-24 max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6">
-        <Sas3Logo height={88} priority className="sm:h-[92px]" linkTo="/" />
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-2 px-4 sm:h-20 sm:gap-4 sm:px-6 lg:h-24">
+        <Sas3Logo height={56} priority className="h-14 sm:h-[72px] lg:h-[88px]" linkTo="/" />
 
         <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex xl:gap-8">
           {nav.map((n, i) => (
@@ -33,29 +33,29 @@ export default function Header({ activeAuth }: HeaderProps) {
           ))}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
             href="/login"
             className={cn(
-              "flex items-center gap-2 rounded border px-4 py-2.5 text-sm font-semibold shadow-sm backdrop-blur-sm transition sm:px-5",
+              "flex items-center gap-1.5 rounded border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-sm transition sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm lg:px-5",
               activeAuth === "login"
                 ? "border-brand-red bg-brand-red/5 text-brand-red"
                 : "border-zinc-300 bg-white/60 text-zinc-900 hover:border-zinc-400 hover:bg-white"
             )}
           >
-            <User size={16} /> LOGIN
+            <User size={16} /> <span className="hidden min-[380px]:inline">LOGIN</span>
           </Link>
           <Link
             href="/register"
             className={cn(
-              "flex items-center gap-2 rounded px-4 py-2.5 text-sm font-semibold transition sm:px-5",
+              "flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm lg:px-5",
               activeAuth === "register"
                 ? "ring-2 ring-brand-red ring-offset-2"
                 : "",
               "bg-brand-red text-white hover:bg-brand-redDark"
             )}
           >
-            <UserPlus size={16} /> REGISTER
+            <UserPlus size={16} /> <span className="hidden min-[380px]:inline">REGISTER</span>
           </Link>
         </div>
       </div>

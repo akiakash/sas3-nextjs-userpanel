@@ -8,15 +8,18 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/layout/site-nav";
 import { Sas3Logo } from "@/components/layout/sas3-logo";
+import { useAuth } from "@/contexts/auth-context";
+import { ApiError } from "@/lib/api-client";
 
 function Login() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -33,13 +36,31 @@ function Login() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Welcome back, Dharshini!", {
+    try {
+      const user = await login({ email, password });
+      toast.success(`Welcome back, ${user.fullName}!`, {
         description: "Redirecting to your Operations Center...",
       });
       router.push("/dashboard");
-    }, 1200);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 403) {
+          toast.error("Access not available", {
+            description: error.message,
+          });
+        } else if (error.status === 401) {
+          toast.error("Invalid email or password", {
+            description: "Please check your credentials and try again.",
+          });
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,7 +135,7 @@ function Login() {
 
             <div className="flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50/80 p-3 text-[10px] font-medium leading-normal text-zinc-500 backdrop-blur-sm">
               <Sparkles className="h-4 w-4 shrink-0 text-brand-red" />
-              <span>Tip: Enter any email/password to simulate authentic access.</span>
+              <span>Sign in with your registered importer email and password.</span>
             </div>
 
             <Button

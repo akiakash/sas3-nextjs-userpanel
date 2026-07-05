@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { User, Building2, ShieldCheck, Mail, Phone, Lock, Save, Globe, ExternalLink } from "lucide-react";
@@ -9,12 +9,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { mockProfile } from "@/lib/dummy-data";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
+import { updateProfile } from "@/lib/auth-api";
+import { ApiError } from "@/lib/api-client";
 
 function ProfileDashboard() {
+  const { user, refreshUser } = useAuth();
   const [profile, setProfile] = useState(mockProfile);
   const [password, setPassword] = useState("••••••••");
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setProfile((prev) => ({
+        ...prev,
+        title: user.title,
+        name: user.fullName,
+        country: user.country,
+        email: user.email,
+        telMobile: user.phone,
+      }));
+    }
+  }, [user]);
 
   // Field change handler
   const handleChange = (key: keyof typeof mockProfile, value: any) => {
@@ -24,17 +41,31 @@ function ProfileDashboard() {
     }));
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await updateProfile({
+        title: profile.title,
+        name: profile.name,
+        country: profile.country,
+        telephone: profile.telMobile,
+      });
+      await refreshUser();
       setIsEditing(false);
       toast.success("Profile Updated Successfully!", {
         description: "Your importer ledger records have been securely synced.",
       });
-    }, 1000);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to update profile. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const labelCls = "block text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ink)]/55 dark:text-zinc-400";
