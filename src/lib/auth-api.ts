@@ -7,8 +7,8 @@ import type {
   UpdateProfilePayload,
 } from '@/types/customer';
 
-export async function register(payload: RegisterPayload): Promise<{ message: string }> {
-  return apiClient<{ message: string }>('/auth/register', {
+export async function register(payload: RegisterPayload): Promise<{ message: string; referenceCode: string }> {
+  return apiClient<{ message: string; referenceCode: string }>('/auth/register', {
     method: 'POST',
     body: payload,
     token: null,

@@ -2,6 +2,7 @@ export type CustomerStatus = "pending" | "permitted" | "blocked";
 
 export interface Customer {
   id: string;
+  referenceCode: string;
   title: string;
   fullName: string;
   country: string;

@@ -73,7 +73,7 @@ function Register() {
     setLoading(true);
 
     try {
-      await register({
+      const result = await register({
         title,
         name,
         country,
@@ -82,7 +82,7 @@ function Register() {
         password,
       });
       toast.success("Access request submitted!", {
-        description: "An admin will review your application. You can sign in once approved.",
+        description: `Your customer reference is ${result.referenceCode}. An admin will review your application.`,
       });
       router.push("/login");
     } catch (error) {

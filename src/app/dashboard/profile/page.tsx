@@ -83,7 +83,10 @@ function ProfileDashboard() {
             {profile.title} {profile.name}
           </h2>
           <p className="mt-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-            {profile.company} · Importer Ledger ID: <span className="font-mono font-bold text-[var(--brand)]">SAS3-DK-2026</span>
+            {profile.company} · Customer reference:{" "}
+            <span className="font-mono font-bold text-[var(--brand)]">
+              {user?.referenceCode ?? "—"}
+            </span>
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
