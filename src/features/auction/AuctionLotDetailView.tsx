@@ -8,8 +8,9 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Gavel, Loader2 } from 'lucide-react';
 import { type AuctionLot, getLot, getUssImages } from '@/lib/auction-api';
+import SendForBidModal from '@/components/customer/SendForBidModal';
 import { formatAuctionPrice, formatAuctionResultPrice, formatAuctionResult } from './auction-utils';
 
 export default function AuctionLotDetailView() {
@@ -20,6 +21,7 @@ export default function AuctionLotDetailView() {
   const [ussImages, setUssImages] = useState<string[] | null>(null);
   const [loadingUss, setLoadingUss] = useState(false);
   const [ussError, setUssError] = useState<string | null>(null);
+  const [bidOpen, setBidOpen] = useState(false);
 
   useEffect(() => {
     if (!lotId) return;
@@ -84,6 +86,14 @@ export default function AuctionLotDetailView() {
           <p className="auction-page-subtitle">
             Lot {lot.bid} · {lot.modelTypeEn} · {lot.modelYearEn}
           </p>
+          <button
+            type="button"
+            onClick={() => setBidOpen(true)}
+            className="red-gradient-btn mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold"
+          >
+            <Gavel size={14} />
+            Send for Bid
+          </button>
         </div>
         <dl className="auction-detail-prices">
           <div>
@@ -156,6 +166,12 @@ export default function AuctionLotDetailView() {
           </dl>
         </section>
       </div>
+
+      <SendForBidModal
+        lot={lot}
+        open={bidOpen}
+        onClose={() => setBidOpen(false)}
+      />
     </div>
   );
 }

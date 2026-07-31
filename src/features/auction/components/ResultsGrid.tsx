@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import type { AuctionLot, SearchResult } from "@/lib/auction-api";
+import SendForBidModal from "@/components/customer/SendForBidModal";
 import { AuctionPhotoLightbox } from "./AuctionPhotoLightbox";
 import {
   equipmentLetters,
@@ -100,6 +101,7 @@ export function ResultsGrid({
   variant?: ResultsGridVariant;
 }) {
   const lots = useMemo(() => result.data, [result.data]);
+  const [bidLot, setBidLot] = useState<AuctionLot | null>(null);
 
   const [lightbox, setLightbox] = useState<{
     images: string[];
@@ -313,6 +315,13 @@ export function ResultsGrid({
                         >
                           View Lot
                         </Link>
+                        <button
+                          type="button"
+                          className="auction-legacy-lot-btn"
+                          onClick={() => setBidLot(lot)}
+                        >
+                          Send for Bid
+                        </button>
                       </div>
                     </td>
                     <StackCell>
@@ -401,6 +410,12 @@ export function ResultsGrid({
           }
         />
       )}
+
+      <SendForBidModal
+        lot={bidLot}
+        open={Boolean(bidLot)}
+        onClose={() => setBidLot(null)}
+      />
     </>
   );
 }
