@@ -1,8 +1,16 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Heart } from "lucide-react";
+import { toast } from "sonner";
 import type { AuctionLot, SearchResult } from "@/lib/auction-api";
+import { ApiError } from "@/lib/api-client";
+import {
+  addToWishlist,
+  getWishlistLotIds,
+  removeWishlistByLotId,
+} from "@/lib/customer-wishlist-api";
 import SendForBidModal from "@/components/customer/SendForBidModal";
 import { AuctionPhotoLightbox } from "./AuctionPhotoLightbox";
 import {
@@ -102,12 +110,55 @@ export function ResultsGrid({
 }) {
   const lots = useMemo(() => result.data, [result.data]);
   const [bidLot, setBidLot] = useState<AuctionLot | null>(null);
+  const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
+  const [wishlistBusy, setWishlistBusy] = useState<string | null>(null);
 
   const [lightbox, setLightbox] = useState<{
     images: string[];
     index: number;
     title: string;
   } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getWishlistLotIds()
+      .then((ids) => {
+        if (!cancelled) setWishlistIds(new Set(ids));
+      })
+      .catch(() => {
+        /* ignore — user may not be authed yet */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const toggleWishlist = async (lot: AuctionLot) => {
+    if (!lot.lotId || wishlistBusy) return;
+    setWishlistBusy(lot.lotId);
+    const saved = wishlistIds.has(lot.lotId);
+    try {
+      if (saved) {
+        await removeWishlistByLotId(lot.lotId);
+        setWishlistIds((prev) => {
+          const next = new Set(prev);
+          next.delete(lot.lotId);
+          return next;
+        });
+        toast.success("Removed from wishlist");
+      } else {
+        await addToWishlist(lot.lotId);
+        setWishlistIds((prev) => new Set(prev).add(lot.lotId));
+        toast.success("Saved to wishlist");
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof ApiError ? error.message : "Wishlist update failed",
+      );
+    } finally {
+      setWishlistBusy(null);
+    }
+  };
 
   const openGallery = (
     lot: AuctionLot,
@@ -321,6 +372,35 @@ export function ResultsGrid({
                           onClick={() => setBidLot(lot)}
                         >
                           Send for Bid
+                        </button>
+                        <button
+                          type="button"
+                          className="auction-legacy-lot-btn"
+                          disabled={wishlistBusy === lot.lotId}
+                          onClick={() => void toggleWishlist(lot)}
+                          title={
+                            wishlistIds.has(lot.lotId)
+                              ? "Remove from wishlist"
+                              : "Add to wishlist"
+                          }
+                          style={{
+                            color: wishlistIds.has(lot.lotId)
+                              ? "#dc2626"
+                              : undefined,
+                          }}
+                        >
+                          <Heart
+                            size={12}
+                            style={{
+                              display: "inline",
+                              marginRight: 4,
+                              verticalAlign: "middle",
+                              fill: wishlistIds.has(lot.lotId)
+                                ? "currentColor"
+                                : "none",
+                            }}
+                          />
+                          {wishlistIds.has(lot.lotId) ? "Saved" : "Wishlist"}
                         </button>
                       </div>
                     </td>

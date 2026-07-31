@@ -3,12 +3,39 @@
 import { ArrowRight, Search, Flame, Award, Zap, Globe } from "lucide-react";
 import { useState } from "react";
 
+export type SearchFilters = {
+  make: string;
+  model: string;
+  grade: string;
+  year: string;
+  stockId: string;
+};
+
 type HeroProps = {
-  onSearchSubmit?: (query: string) => void;
+  onSearchSubmit?: (filters: SearchFilters) => void;
 };
 
 export default function Hero({ onSearchSubmit }: HeroProps) {
   const [activeTab, setActiveTab] = useState<"live" | "stock" | "sourcing">("live");
+
+  // Search filter states
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
+  const [grade, setGrade] = useState("");
+  const [year, setYear] = useState("");
+  const [stockId, setStockId] = useState("");
+
+  const handleSearch = () => {
+    const filters: SearchFilters = { make, model, grade, year, stockId };
+    if (onSearchSubmit) {
+      onSearchSubmit(filters);
+    }
+    // Smooth scroll to live auctions grid
+    const el = document.getElementById("live-auctions");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <section className="relative border-b border-zinc-200/80 bg-gradient-to-b from-red-50/40 via-white to-zinc-50/80 overflow-hidden py-12 sm:py-16">
@@ -40,7 +67,7 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
 
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
               <a
-                href="/vehicles/auction"
+                href="#live-auctions"
                 className="red-gradient-btn group flex items-center gap-3 rounded-xl px-7 py-4 text-sm font-extrabold tracking-wider"
               >
                 <span>EXPLORE LIVE AUCTIONS</span>
@@ -86,17 +113,17 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
           </div>
         </div>
 
-        {/* Minimal Search & Filter Box */}
-        <div className="mt-12 rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl sm:p-6">
+        {/* Redesigned Search & Filter Box */}
+        <div className="mt-12 rounded-3xl border border-zinc-200/90 bg-white p-5 shadow-2xl sm:p-7">
           {/* Filter Mode Tabs */}
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 pb-4">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 pb-4">
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setActiveTab("live")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
                   activeTab === "live"
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/20"
+                    ? "bg-red-600 text-white shadow-md shadow-red-600/25"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                 }`}
               >
@@ -105,9 +132,9 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab("stock")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
                   activeTab === "stock"
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/20"
+                    ? "bg-red-600 text-white shadow-md shadow-red-600/25"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                 }`}
               >
@@ -116,9 +143,9 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab("sourcing")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
                   activeTab === "sourcing"
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/20"
+                    ? "bg-red-600 text-white shadow-md shadow-red-600/25"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                 }`}
               >
@@ -126,15 +153,22 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
               </button>
             </div>
 
-            <span className="hidden text-xs text-zinc-500 font-medium lg:inline">
+            <span className="hidden text-xs text-zinc-500 font-semibold lg:inline">
               Real-Time Feed from USS Tokyo, Yokohama, & HAA Kobe
             </span>
           </div>
 
           {/* Search Inputs Grid */}
-          <div className="grid grid-cols-12 gap-3.5">
+          <div className="grid grid-cols-12 gap-3.5 items-end">
             <Field label="Make" className="col-span-6 md:col-span-2">
-              <select className="glass-input">
+              <select
+                value={make}
+                onChange={(e) => {
+                  setMake(e.target.value);
+                  setModel("");
+                }}
+                className="glass-input text-xs font-semibold"
+              >
                 <option value="">All Makes (Toyota, Nissan...)</option>
                 <option value="Toyota">Toyota</option>
                 <option value="Lexus">Lexus</option>
@@ -147,18 +181,34 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
             </Field>
 
             <Field label="Model" className="col-span-6 md:col-span-2">
-              <select className="glass-input">
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="glass-input text-xs font-semibold"
+              >
                 <option value="">All Models</option>
-                <option value="Land Cruiser">Land Cruiser ZX</option>
-                <option value="LS 500">LS 500 F-Sport</option>
-                <option value="GT-R">GT-R Nismo</option>
-                <option value="Vellfire">Vellfire / Alphard</option>
-                <option value="Supra">GR Supra</option>
+                {make === "Toyota" || !make ? (
+                  <>
+                    <option value="Land Cruiser">Land Cruiser ZX</option>
+                    <option value="Vellfire">Vellfire / Alphard</option>
+                    <option value="Supra">GR Supra</option>
+                  </>
+                ) : null}
+                {make === "Lexus" || !make ? (
+                  <option value="LS 500">LS 500 F-Sport</option>
+                ) : null}
+                {make === "Nissan" || !make ? (
+                  <option value="GT-R">GT-R Nismo</option>
+                ) : null}
               </select>
             </Field>
 
             <Field label="Auction Grade" className="col-span-6 md:col-span-2">
-              <select className="glass-input">
+              <select
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                className="glass-input text-xs font-semibold"
+              >
                 <option value="">Any Grade (4.0+, 4.5+, 5.0)</option>
                 <option value="5.0">Grade 5.0 / S (Like New)</option>
                 <option value="4.5">Grade 4.5 (Excellent)</option>
@@ -167,23 +217,34 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
             </Field>
 
             <Field label="Year Range" className="col-span-6 md:col-span-2">
-              <select className="glass-input">
-                <option value="">2018 - 2024</option>
-                <option value="2022+">2022 - 2024</option>
-                <option value="2018-2021">2018 - 2021</option>
-                <option value="2015-2017">2015 - 2017</option>
+              <select
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="glass-input text-xs font-semibold"
+              >
+                <option value="">All Years</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
               </select>
             </Field>
 
             <Field label="Stock ID / Lot #" className="col-span-12 md:col-span-2">
-              <input className="glass-input" placeholder="e.g. Lot #8821, GT-R" />
+              <input
+                type="text"
+                value={stockId}
+                onChange={(e) => setStockId(e.target.value)}
+                className="glass-input text-xs font-semibold"
+                placeholder="e.g. Lot #8821, GT-R"
+              />
             </Field>
 
-            <div className="col-span-12 flex items-end md:col-span-2">
+            <div className="col-span-12 md:col-span-2">
               <button
                 type="button"
-                onClick={() => onSearchSubmit && onSearchSubmit("all")}
-                className="red-gradient-btn flex w-full items-center justify-center gap-2 rounded-xl py-3 font-extrabold tracking-wider text-white"
+                onClick={handleSearch}
+                className="red-gradient-btn flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-extrabold tracking-wider"
               >
                 <Search size={16} /> SEARCH LOTS
               </button>

@@ -8,8 +8,15 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { AlertCircle, ArrowLeft, Gavel, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Gavel, Heart, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { type AuctionLot, getLot, getUssImages } from '@/lib/auction-api';
+import { ApiError } from '@/lib/api-client';
+import {
+  addToWishlist,
+  getWishlistLotIds,
+  removeWishlistByLotId,
+} from '@/lib/customer-wishlist-api';
 import SendForBidModal from '@/components/customer/SendForBidModal';
 import { formatAuctionPrice, formatAuctionResultPrice, formatAuctionResult } from './auction-utils';
 
@@ -22,6 +29,8 @@ export default function AuctionLotDetailView() {
   const [loadingUss, setLoadingUss] = useState(false);
   const [ussError, setUssError] = useState<string | null>(null);
   const [bidOpen, setBidOpen] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistBusy, setWishlistBusy] = useState(false);
 
   useEffect(() => {
     if (!lotId) return;
@@ -29,6 +38,35 @@ export default function AuctionLotDetailView() {
       .then(setLot)
       .catch(err => setLoadError(err instanceof Error ? err.message : 'Lot not found'));
   }, [lotId]);
+
+  useEffect(() => {
+    if (!lotId) return;
+    void getWishlistLotIds()
+      .then(ids => setWishlisted(ids.includes(lotId)))
+      .catch(() => undefined);
+  }, [lotId]);
+
+  const toggleWishlist = async () => {
+    if (!lot?.lotId || wishlistBusy) return;
+    setWishlistBusy(true);
+    try {
+      if (wishlisted) {
+        await removeWishlistByLotId(lot.lotId);
+        setWishlisted(false);
+        toast.success('Removed from wishlist');
+      } else {
+        await addToWishlist(lot.lotId);
+        setWishlisted(true);
+        toast.success('Saved to wishlist');
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof ApiError ? error.message : 'Wishlist update failed',
+      );
+    } finally {
+      setWishlistBusy(false);
+    }
+  };
 
   const loadUssImages = async () => {
     if (!lot) return;
@@ -86,14 +124,28 @@ export default function AuctionLotDetailView() {
           <p className="auction-page-subtitle">
             Lot {lot.bid} · {lot.modelTypeEn} · {lot.modelYearEn}
           </p>
-          <button
-            type="button"
-            onClick={() => setBidOpen(true)}
-            className="red-gradient-btn mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold"
-          >
-            <Gavel size={14} />
-            Send for Bid
-          </button>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setBidOpen(true)}
+              className="red-gradient-btn inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold"
+            >
+              <Gavel size={14} />
+              Send for Bid
+            </button>
+            <button
+              type="button"
+              onClick={() => void toggleWishlist()}
+              disabled={wishlistBusy}
+              className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-xs font-bold text-zinc-800 shadow-sm transition hover:border-red-300 hover:text-red-600 disabled:opacity-60"
+            >
+              <Heart
+                size={14}
+                className={wishlisted ? 'fill-red-600 text-red-600' : ''}
+              />
+              {wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
+            </button>
+          </div>
         </div>
         <dl className="auction-detail-prices">
           <div>

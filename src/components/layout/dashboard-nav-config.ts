@@ -27,7 +27,7 @@ export const dashboardNavItems: DashboardNavItem[] = [
   { label: "Payments", to: "/dashboard/payments", icon: CreditCard },
   { label: "Bids", to: "/dashboard/bids", icon: Gavel, badge: 8 },
   { label: "Negotiations", to: "/dashboard/negotiations", icon: MessageSquare, badge: 2 },
-  { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart, badge: 3 },
+  { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart },
   { label: "Favourites", to: "/dashboard/favourites", icon: Star },
   { label: "Portfolio", to: "/dashboard/portfolio", icon: Store },
   { label: "Profile", to: "/dashboard/profile", icon: User },

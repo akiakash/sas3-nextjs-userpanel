@@ -3,16 +3,25 @@
 import { useState } from "react";
 import TopBar from "@/components/home/TopBar";
 import Header from "@/components/home/Header";
-import Hero from "@/components/home/Hero";
+import Hero, { type SearchFilters } from "@/components/home/Hero";
 import Brands from "@/components/home/Brands";
 import Featured from "@/components/home/Featured";
 import AuctionProcess from "@/components/home/AuctionProcess";
 import CustomerConciergeWidget from "@/components/customer/CustomerConciergeWidget";
 import CifCalculatorModal from "@/components/customer/CifCalculatorModal";
 
+const EMPTY_FILTERS: SearchFilters = {
+  make: "",
+  model: "",
+  grade: "",
+  year: "",
+  stockId: "",
+};
+
 export default function Home() {
   const [isCifModalOpen, setIsCifModalOpen] = useState(false);
   const [isChatWidgetOpen, setIsChatWidgetOpen] = useState(false);
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>(EMPTY_FILTERS);
 
   return (
     <main className="min-h-screen bg-[#FAFAFC] text-zinc-900 selection:bg-red-600 selection:text-white">
@@ -25,14 +34,18 @@ export default function Home() {
         onOpenChatModal={() => setIsChatWidgetOpen(true)}
       />
 
-      {/* Minimal Hero Banner with Live Search */}
-      <Hero onSearchSubmit={() => {}} />
+      {/* Minimal Hero Banner with Live Stateful Search & Smooth Scroll */}
+      <Hero onSearchSubmit={(filters) => setSearchFilters(filters)} />
 
       {/* Brand & Manufacturer Grid */}
       <Brands />
 
-      {/* Real-time Bidding Hall Showcase */}
-      <Featured onOpenChatModal={() => setIsChatWidgetOpen(true)} />
+      {/* Real-time Bidding Hall Showcase with Dynamic Live Filtering */}
+      <Featured
+        searchFilters={searchFilters}
+        onClearFilters={() => setSearchFilters(EMPTY_FILTERS)}
+        onOpenChatModal={() => setIsChatWidgetOpen(true)}
+      />
 
       {/* Step-by-Step Auction Import Process */}
       <AuctionProcess />

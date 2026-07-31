@@ -58,7 +58,7 @@ const navSections: NavSection[] = [
   {
     title: "Saved",
     items: [
-      { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart, badge: 3 },
+      { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart },
       { label: "Favourites", to: "/dashboard/favourites", icon: Star },
     ],
   },
