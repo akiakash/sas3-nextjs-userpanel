@@ -11,6 +11,7 @@ import React, {
 import { useRouter } from "next/navigation";
 import * as authApi from "@/lib/auth-api";
 import { getStoredToken } from "@/lib/api-client";
+import { ensureSessionCookie } from "@/lib/auth-session";
 import type { Customer, LoginPayload, RegisterPayload } from "@/types/customer";
 
 interface AuthContextValue {
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const profile = await authApi.getMe(storedToken);
+      ensureSessionCookie();
       setUser(profile);
       setToken(storedToken);
     } catch {

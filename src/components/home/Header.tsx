@@ -1,62 +1,143 @@
+"use client";
+
 import Link from "next/link";
-import { User, UserPlus } from "lucide-react";
+import { User, UserPlus, Calculator, Headset, LayoutDashboard, LogOut } from "lucide-react";
 import { Sas3Logo } from "@/components/layout/sas3-logo";
+import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 
-const nav = ["HOME", "STOCK", "AUCTION", "ABOUT US", "HOW TO BUY", "BANK DETAILS", "CONTACT"];
+const navItems = [
+  { label: "LIVE AUCTIONS", href: "/vehicles/auction", badge: "LIVE" },
+  { label: "FEATURED INVENTORY", href: "#featured", badge: "" },
+  { label: "HOW TO BUY", href: "#process", badge: "" },
+  { label: "CALCULATE CIF", href: "#cif-calculator", badge: "" },
+  { label: "COMPANY & BANK", href: "#company", badge: "" },
+];
 
 type HeaderProps = {
   activeAuth?: "login" | "register";
+  onOpenCifModal?: () => void;
+  onOpenChatModal?: () => void;
 };
 
-export default function Header({ activeAuth }: HeaderProps) {
-  return (
-    <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-white/70 shadow-sm backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-2 px-4 sm:h-20 sm:gap-4 sm:px-6 lg:h-24">
-        <Sas3Logo height={56} priority className="h-14 sm:h-[72px] lg:h-[88px]" linkTo="/" />
+export default function Header({ activeAuth, onOpenCifModal, onOpenChatModal }: HeaderProps) {
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
-        <nav className="hidden flex-1 items-center justify-center gap-6 lg:flex xl:gap-8">
-          {nav.map((n, i) => (
-            <Link
-              key={n}
-              href="/"
-              className={cn(
-                "relative py-2 text-[13px] font-semibold transition-colors hover:text-brand-red",
-                i === 0 && !activeAuth ? "text-brand-red" : "text-gray-700"
-              )}
-            >
-              {n}
-              {i === 0 && !activeAuth && (
-                <span className="absolute -bottom-0.5 left-0 right-0 h-[3px] rounded-full bg-brand-red" />
-              )}
-            </Link>
-          ))}
+  return (
+    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/90 shadow-sm backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-22">
+        {/* Brand Logo & Tagline */}
+        <div className="flex items-center gap-4">
+          <Sas3Logo height={54} priority className="h-12 sm:h-14 lg:h-16" linkTo="/" />
+          <div className="hidden border-l border-zinc-200 pl-3 md:block">
+            <span className="block text-[11px] font-extrabold tracking-widest text-red-600">JAPAN VEHICLE AUCTIONS</span>
+            <span className="block text-[10px] text-zinc-500 font-medium">Premium Global Import Desk</span>
+          </div>
+        </div>
+
+        {/* Center Navigation Links */}
+        <nav className="hidden items-center gap-1 xl:flex">
+          {navItems.map((item) => {
+            const isRoute = item.href.startsWith("/");
+            const className =
+              "group relative flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-extrabold tracking-wider text-zinc-700 transition-all hover:bg-red-50 hover:text-red-600";
+            const badge = item.badge ? (
+              <span className="animate-soft-pulse rounded-full bg-red-600 px-1.5 py-0.5 text-[9px] font-black text-white">
+                {item.badge}
+              </span>
+            ) : null;
+
+            if (isRoute) {
+              return (
+                <Link key={item.label} href={item.href} className={className}>
+                  {item.label}
+                  {badge}
+                </Link>
+              );
+            }
+
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => {
+                  if (item.href === "#cif-calculator" && onOpenCifModal) {
+                    e.preventDefault();
+                    onOpenCifModal();
+                  }
+                }}
+                className={className}
+              >
+                {item.label}
+                {badge}
+              </a>
+            );
+          })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <Link
-            href="/login"
-            className={cn(
-              "flex items-center gap-1.5 rounded border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-sm transition sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm lg:px-5",
-              activeAuth === "login"
-                ? "border-brand-red bg-brand-red/5 text-brand-red"
-                : "border-zinc-300 bg-white/60 text-zinc-900 hover:border-zinc-400 hover:bg-white"
-            )}
+        {/* Quick Action Tools & Auth */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Quick CIF Tool */}
+          <button
+            type="button"
+            onClick={onOpenCifModal}
+            className="hidden items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-bold text-red-700 transition hover:bg-red-100 md:flex"
           >
-            <User size={16} /> <span className="hidden min-[380px]:inline">LOGIN</span>
-          </Link>
-          <Link
-            href="/register"
-            className={cn(
-              "flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm lg:px-5",
-              activeAuth === "register"
-                ? "ring-2 ring-brand-red ring-offset-2"
-                : "",
-              "bg-brand-red text-white hover:bg-brand-redDark"
-            )}
+            <Calculator size={15} />
+            <span>CIF Calculator</span>
+          </button>
+
+          {/* Quick Concierge Support Trigger */}
+          <button
+            type="button"
+            onClick={onOpenChatModal}
+            className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-2 text-xs font-bold text-zinc-700 transition hover:bg-zinc-100"
           >
-            <UserPlus size={16} /> <span className="hidden min-[380px]:inline">REGISTER</span>
-          </Link>
+            <Headset size={15} className="text-red-600" />
+            <span className="hidden sm:inline">Ask Advisor</span>
+          </button>
+
+          {/* Auth Buttons */}
+          {!isLoading && isAuthenticated ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1.5 rounded-xl border border-zinc-200 px-3.5 py-2 text-xs font-bold tracking-wider text-zinc-800 transition hover:border-zinc-300 hover:bg-zinc-50 sm:px-4 sm:py-2.5"
+              >
+                <LayoutDashboard size={15} />
+                <span className="hidden max-w-[120px] truncate min-[420px]:inline">
+                  {user?.fullName?.split(" ")[0] || "Dashboard"}
+                </span>
+              </Link>
+              <button
+                type="button"
+                onClick={logout}
+                className="flex items-center gap-1.5 rounded-xl border border-zinc-200 px-3.5 py-2 text-xs font-bold tracking-wider text-zinc-800 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 sm:px-4 sm:py-2.5"
+              >
+                <LogOut size={15} />
+                <span className="hidden min-[420px]:inline">LOGOUT</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className={cn(
+                  "flex items-center gap-1.5 rounded-xl border border-zinc-200 px-3.5 py-2 text-xs font-bold tracking-wider text-zinc-800 transition hover:border-zinc-300 hover:bg-zinc-50 sm:px-4 sm:py-2.5",
+                  activeAuth === "login" && "border-red-600 bg-red-50 text-red-600"
+                )}
+              >
+                <User size={15} /> <span className="hidden min-[420px]:inline">LOGIN</span>
+              </Link>
+
+              <Link
+                href="/register"
+                className="red-gradient-btn flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold tracking-wider"
+              >
+                <UserPlus size={15} /> <span className="hidden min-[420px]:inline">REGISTER</span>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

@@ -8,6 +8,7 @@ import {
   ShoppingBag,
   CreditCard,
   Gavel,
+  Car,
   MessageSquare,
   Heart,
   Star,
@@ -49,6 +50,7 @@ const navSections: NavSection[] = [
   {
     title: "Auctions",
     items: [
+      { label: "Live Auction", to: "/vehicles/auction", icon: Car },
       { label: "Bids", to: "/dashboard/bids", icon: Gavel, badge: 8 },
       { label: "Negotiations", to: "/dashboard/negotiations", icon: MessageSquare, badge: 2 },
     ],

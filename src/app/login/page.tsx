@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Mail, Eye, EyeOff, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,16 @@ import { Sas3Logo } from "@/components/layout/sas3-logo";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/lib/api-client";
 
-function Login() {
+function safeReturnPath(from: string | null): string {
+  if (!from || !from.startsWith("/") || from.startsWith("//")) {
+    return "/dashboard";
+  }
+  return from;
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,10 +46,14 @@ function Login() {
 
     try {
       const user = await login({ email, password });
+      const next = safeReturnPath(searchParams.get("from"));
       toast.success(`Welcome back, ${user.fullName}!`, {
-        description: "Redirecting to your Operations Center...",
+        description:
+          next.startsWith("/vehicles/auction")
+            ? "Opening live auctions..."
+            : "Redirecting to your Operations Center...",
       });
-      router.push("/dashboard");
+      router.push(next);
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.status === 403) {
@@ -165,4 +177,16 @@ function Login() {
 }
 
 
-export default Login;
+export default function Login() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-zinc-50 text-sm font-semibold text-zinc-500">
+          Loading...
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}

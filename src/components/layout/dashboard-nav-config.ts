@@ -3,6 +3,7 @@ import {
   ShoppingBag,
   CreditCard,
   Gavel,
+  Car,
   MessageSquare,
   Heart,
   Star,
@@ -21,6 +22,7 @@ export type DashboardNavItem = {
 
 export const dashboardNavItems: DashboardNavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, exact: true },
+  { label: "Live Auction", to: "/vehicles/auction", icon: Car },
   { label: "Orders", to: "/dashboard/orders", icon: ShoppingBag, badge: 5 },
   { label: "Payments", to: "/dashboard/payments", icon: CreditCard },
   { label: "Bids", to: "/dashboard/bids", icon: Gavel, badge: 8 },

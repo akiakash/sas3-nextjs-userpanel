@@ -1,23 +1,29 @@
-import { apiClient, setStoredToken } from './api-client';
+import { apiClient, setStoredToken } from "./api-client";
+import { clearCustomerSession } from "./auth-session";
 import type {
   AuthResponse,
   Customer,
   LoginPayload,
   RegisterPayload,
   UpdateProfilePayload,
-} from '@/types/customer';
+} from "@/types/customer";
 
-export async function register(payload: RegisterPayload): Promise<{ message: string; referenceCode: string }> {
-  return apiClient<{ message: string; referenceCode: string }>('/auth/register', {
-    method: 'POST',
-    body: payload,
-    token: null,
-  });
+export async function register(
+  payload: RegisterPayload,
+): Promise<{ message: string; referenceCode: string }> {
+  return apiClient<{ message: string; referenceCode: string }>(
+    "/customer-auth/register",
+    {
+      method: "POST",
+      body: payload,
+      token: null,
+    },
+  );
 }
 
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
-  const response = await apiClient<AuthResponse>('/auth/login', {
-    method: 'POST',
+  const response = await apiClient<AuthResponse>("/customer-auth/login", {
+    method: "POST",
     body: payload,
     token: null,
   });
@@ -26,27 +32,28 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
 }
 
 export async function getMe(token?: string): Promise<Customer> {
-  return apiClient<Customer>('/auth/me', {
-    method: 'GET',
+  return apiClient<Customer>("/customer-auth/me", {
+    method: "GET",
     token,
+    skipAuthRedirect: true,
   });
 }
 
 export async function updateProfile(
   payload: UpdateProfilePayload,
 ): Promise<Customer> {
-  return apiClient<Customer>('/auth/me', {
-    method: 'PATCH',
+  return apiClient<Customer>("/customer-auth/me", {
+    method: "PATCH",
     body: payload,
   });
 }
 
 export async function deleteAccount(): Promise<{ message: string }> {
-  return apiClient<{ message: string }>('/auth/me', {
-    method: 'DELETE',
+  return apiClient<{ message: string }>("/customer-auth/me", {
+    method: "DELETE",
   });
 }
 
 export function logout(): void {
-  setStoredToken(null);
+  clearCustomerSession();
 }
