@@ -38,216 +38,219 @@ export default function Hero({ onSearchSubmit }: HeroProps) {
   };
 
   return (
-    <section className="relative border-b border-zinc-200/80 bg-gradient-to-b from-red-50/40 via-white to-zinc-50/80 overflow-hidden py-12 sm:py-16">
-      {/* Subtle Red Ambient Glow */}
-      <div className="pointer-events-none absolute -right-20 -top-20 h-96 w-96 rounded-full bg-red-400/10 blur-[120px]" />
-      <div className="pointer-events-none absolute -left-20 bottom-0 h-96 w-96 rounded-full bg-red-600/5 blur-[120px]" />
+    <section className="relative border-b border-zinc-200/80 overflow-hidden min-h-[calc(100vh-110px)] flex flex-col justify-center py-8 sm:py-12 text-zinc-900">
+      {/* Real Local Bright Background Video Layer (/car.mp4) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=2000&q=80"
+          className="h-full w-full object-cover scale-105 filter brightness-100 contrast-100"
+        >
+          <source src="/car.mp4" type="video/mp4" />
+        </video>
 
-      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Heading & Messaging */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3.5 py-1.5 shadow-sm">
-              <Flame size={14} className="text-red-600 animate-soft-pulse" />
-              <span className="text-xs font-bold tracking-wider text-red-700 uppercase">
-                Direct USS & JAA Japan Bidding Portal
-              </span>
-            </div>
+        {/* Soft Edge Vignette Shadow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/30" />
+      </div>
 
-            <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl leading-[1.1]">
-              BID DIRECTLY ON <br />
-              <span className="bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
-                JAPANESE VEHICLES
-              </span>
-            </h1>
+      <div className="relative z-10 mx-auto max-w-[1400px] w-full px-4 sm:px-6 flex flex-col justify-center my-auto">
+        {/* Full-Width Liquid Glass Master Card Centered Over Video Watermark */}
+        <div className="mx-auto max-w-[1340px] w-full">
+          <div className="relative w-full rounded-[32px] border border-white/70 bg-white/40 shadow-[0_30px_70px_rgba(0,0,0,0.18)] backdrop-blur-3xl overflow-hidden text-zinc-900 ring-1 ring-white/60">
+            {/* Specular Liquid Sheen Highlight */}
+            <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-gradient-to-br from-white/70 via-white/20 to-transparent blur-2xl" />
+            <div className="pointer-events-none absolute -right-32 -bottom-32 h-80 w-80 rounded-full bg-gradient-to-tl from-red-500/10 via-white/10 to-transparent blur-2xl" />
 
-            <p className="max-w-xl text-base text-zinc-600 leading-relaxed sm:text-lg">
-              Access 150,000+ weekly auction listings across USS, JAA, ARAI, and TAA halls. Includes bilingual inspection translations, chassis reports, & worldwide CIF shipping.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
-              <a
-                href="#live-auctions"
-                className="red-gradient-btn group flex items-center gap-3 rounded-xl px-7 py-4 text-sm font-extrabold tracking-wider"
-              >
-                <span>EXPLORE LIVE AUCTIONS</span>
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </a>
-
-              <div className="flex items-center gap-6 border-l border-zinc-200 pl-6 text-xs text-zinc-600">
-                <div>
-                  <div className="font-mono text-xl font-extrabold text-zinc-900">150,000+</div>
-                  <div className="text-zinc-500 font-medium">Weekly Cars</div>
+            {/* Top Section: Title, Messaging & Stats */}
+            <div className="p-5 sm:p-7 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 text-left">
+              {/* Left Content Block */}
+              <div className="space-y-2.5 max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-white/60 px-3.5 py-1 backdrop-blur-md shadow-sm">
+                  <Flame size={13} className="text-red-600 animate-pulse" />
+                  <span className="text-[11px] font-extrabold tracking-wider text-red-700 uppercase">
+                    Direct USS, JAA & ARAI Bidding Portal
+                  </span>
                 </div>
-                <div>
-                  <div className="font-mono text-xl font-extrabold text-red-600">100%</div>
-                  <div className="text-zinc-500 font-medium">Inspected</div>
-                </div>
-                <div>
-                  <div className="font-mono text-xl font-extrabold text-zinc-900">120+</div>
-                  <div className="text-zinc-500 font-medium">Global Ports</div>
+
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-zinc-900 leading-tight">
+                  Direct Vehicle{" "}
+                  <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-700 bg-clip-text text-transparent">
+                    Bids
+                  </span>
+                </h1>
+
+                <p className="text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed drop-shadow-sm">
+                  150,000+ weekly Japanese auction lots with bilingual inspection & worldwide CIF shipping.
+                </p>
+              </div>
+
+              {/* Right Action & Stats Block */}
+              <div className="flex flex-col items-center md:items-end gap-4 flex-shrink-0">
+                <a
+                  href="#live-auctions"
+                  className="red-gradient-btn group inline-flex items-center gap-2.5 rounded-xl px-7 py-3.5 text-xs font-extrabold tracking-wider shadow-red-600/40 whitespace-nowrap"
+                >
+                  <span>EXPLORE LIVE AUCTIONS</span>
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </a>
+
+                <div className="flex items-center gap-6 border-t md:border-t-0 md:border-l border-zinc-900/10 pt-3 md:pt-0 md:pl-6 text-xs text-zinc-800">
+                  <div className="text-center md:text-left">
+                    <div className="font-mono text-base sm:text-lg font-extrabold text-zinc-900">150,000+</div>
+                    <div className="text-zinc-600 font-medium text-[11px]">Weekly Cars</div>
+                  </div>
+                  <div className="text-center md:text-left">
+                    <div className="font-mono text-base sm:text-lg font-extrabold text-red-600">100%</div>
+                    <div className="text-zinc-600 font-medium text-[11px]">Inspected</div>
+                  </div>
+                  <div className="text-center md:text-left">
+                    <div className="font-mono text-base sm:text-lg font-extrabold text-zinc-900">120+</div>
+                    <div className="text-zinc-600 font-medium text-[11px]">Global Ports</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Right Column: Hero Spotlight Graphic */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-zinc-200 shadow-2xl bg-white p-2">
-              <img
-                src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80"
-                alt="Japanese Supercar Auction Spotlight"
-                className="h-full w-full object-cover rounded-2xl transition-transform duration-700 hover:scale-105"
-              />
-              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/40 bg-white/90 p-4 shadow-xl backdrop-blur-md flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-red-600">LIVE AUCTION SPOTLIGHT</span>
-                  <div className="font-extrabold text-sm text-zinc-900">NISSAN GT-R NISMO EDITION</div>
+            {/* Integrated Liquid Glass Search Section */}
+            <div className="border-t border-zinc-900/10 bg-white/35 p-4 sm:p-6 backdrop-blur-2xl">
+              {/* Filter Mode Tabs */}
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-900/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("live")}
+                    className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                      activeTab === "live"
+                        ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                        : "bg-white/50 text-zinc-800 hover:bg-white/80 border border-white/60 backdrop-blur-md"
+                    }`}
+                  >
+                    <Zap size={13} /> LIVE AUCTIONS (14,820)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("stock")}
+                    className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                      activeTab === "stock"
+                        ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                        : "bg-white/50 text-zinc-800 hover:bg-white/80 border border-white/60 backdrop-blur-md"
+                    }`}
+                  >
+                    <Award size={13} /> FIXED PRICE STOCK (840)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("sourcing")}
+                    className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                      activeTab === "sourcing"
+                        ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                        : "bg-white/50 text-zinc-800 hover:bg-white/80 border border-white/60 backdrop-blur-md"
+                    }`}
+                  >
+                    <Globe size={13} /> CUSTOM SOURCING
+                  </button>
                 </div>
-                <div className="text-right font-mono">
-                  <div className="text-xs text-zinc-500">CURRENT BID</div>
-                  <div className="text-base font-extrabold text-red-600">US$ 142,000</div>
+
+                <span className="hidden text-[11px] text-zinc-600 font-semibold lg:inline">
+                  Real-Time Feed from USS Tokyo, Yokohama, & HAA Kobe
+                </span>
+              </div>
+
+              {/* Search Inputs Grid */}
+              <div className="grid grid-cols-12 gap-3.5 items-end">
+                <Field label="Make" className="col-span-6 md:col-span-2">
+                  <select
+                    value={make}
+                    onChange={(e) => {
+                      setMake(e.target.value);
+                      setModel("");
+                    }}
+                    className="glass-input text-xs font-semibold bg-white/70 border-white/80 focus:bg-white text-zinc-900"
+                  >
+                    <option value="">All Makes (Toyota...)</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Lexus">Lexus</option>
+                    <option value="Nissan">Nissan</option>
+                    <option value="Honda">Honda</option>
+                    <option value="Mazda">Mazda</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                  </select>
+                </Field>
+
+                <Field label="Model" className="col-span-6 md:col-span-2">
+                  <select
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    className="glass-input text-xs font-semibold bg-white/70 border-white/80 focus:bg-white text-zinc-900"
+                  >
+                    <option value="">All Models</option>
+                    {make === "Toyota" || !make ? (
+                      <>
+                        <option value="Land Cruiser">Land Cruiser ZX</option>
+                        <option value="Vellfire">Vellfire / Alphard</option>
+                        <option value="Supra">GR Supra</option>
+                      </>
+                    ) : null}
+                    {make === "Lexus" || !make ? (
+                      <option value="LS 500">LS 500 F-Sport</option>
+                    ) : null}
+                    {make === "Nissan" || !make ? (
+                      <option value="GT-R">GT-R Nismo</option>
+                    ) : null}
+                  </select>
+                </Field>
+
+                <Field label="Auction Grade" className="col-span-6 md:col-span-2">
+                  <select
+                    value={grade}
+                    onChange={(e) => setGrade(e.target.value)}
+                    className="glass-input text-xs font-semibold bg-white/70 border-white/80 focus:bg-white text-zinc-900"
+                  >
+                    <option value="">Any Grade (4.0+, 5.0)</option>
+                    <option value="5.0">Grade 5.0 / S (Like New)</option>
+                    <option value="4.5">Grade 4.5 (Excellent)</option>
+                    <option value="4.0">Grade 4.0 (Good)</option>
+                  </select>
+                </Field>
+
+                <Field label="Year Range" className="col-span-6 md:col-span-2">
+                  <select
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="glass-input text-xs font-semibold bg-white/70 border-white/80 focus:bg-white text-zinc-900"
+                  >
+                    <option value="">All Years</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                </Field>
+
+                <Field label="Stock ID / Lot #" className="col-span-12 md:col-span-2">
+                  <input
+                    type="text"
+                    value={stockId}
+                    onChange={(e) => setStockId(e.target.value)}
+                    className="glass-input text-xs font-semibold bg-white/70 border-white/80 focus:bg-white text-zinc-900 placeholder-zinc-500"
+                    placeholder="e.g. Lot #8821, GT-R"
+                  />
+                </Field>
+
+                <div className="col-span-12 md:col-span-2">
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    className="red-gradient-btn flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-extrabold tracking-wider"
+                  >
+                    <Search size={15} /> SEARCH LOTS
+                  </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Redesigned Search & Filter Box */}
-        <div className="mt-12 rounded-3xl border border-zinc-200/90 bg-white p-5 shadow-2xl sm:p-7">
-          {/* Filter Mode Tabs */}
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 pb-4">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveTab("live")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
-                  activeTab === "live"
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/25"
-                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-                }`}
-              >
-                <Zap size={14} /> LIVE AUCTIONS (14,820)
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("stock")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
-                  activeTab === "stock"
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/25"
-                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-                }`}
-              >
-                <Award size={14} /> FIXED PRICE STOCK (840)
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("sourcing")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
-                  activeTab === "sourcing"
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/25"
-                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-                }`}
-              >
-                <Globe size={14} /> CUSTOM SOURCING
-              </button>
-            </div>
-
-            <span className="hidden text-xs text-zinc-500 font-semibold lg:inline">
-              Real-Time Feed from USS Tokyo, Yokohama, & HAA Kobe
-            </span>
-          </div>
-
-          {/* Search Inputs Grid */}
-          <div className="grid grid-cols-12 gap-3.5 items-end">
-            <Field label="Make" className="col-span-6 md:col-span-2">
-              <select
-                value={make}
-                onChange={(e) => {
-                  setMake(e.target.value);
-                  setModel("");
-                }}
-                className="glass-input text-xs font-semibold"
-              >
-                <option value="">All Makes (Toyota, Nissan...)</option>
-                <option value="Toyota">Toyota</option>
-                <option value="Lexus">Lexus</option>
-                <option value="Nissan">Nissan</option>
-                <option value="Honda">Honda</option>
-                <option value="Mazda">Mazda</option>
-                <option value="BMW">BMW</option>
-                <option value="Mercedes-Benz">Mercedes-Benz</option>
-              </select>
-            </Field>
-
-            <Field label="Model" className="col-span-6 md:col-span-2">
-              <select
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className="glass-input text-xs font-semibold"
-              >
-                <option value="">All Models</option>
-                {make === "Toyota" || !make ? (
-                  <>
-                    <option value="Land Cruiser">Land Cruiser ZX</option>
-                    <option value="Vellfire">Vellfire / Alphard</option>
-                    <option value="Supra">GR Supra</option>
-                  </>
-                ) : null}
-                {make === "Lexus" || !make ? (
-                  <option value="LS 500">LS 500 F-Sport</option>
-                ) : null}
-                {make === "Nissan" || !make ? (
-                  <option value="GT-R">GT-R Nismo</option>
-                ) : null}
-              </select>
-            </Field>
-
-            <Field label="Auction Grade" className="col-span-6 md:col-span-2">
-              <select
-                value={grade}
-                onChange={(e) => setGrade(e.target.value)}
-                className="glass-input text-xs font-semibold"
-              >
-                <option value="">Any Grade (4.0+, 4.5+, 5.0)</option>
-                <option value="5.0">Grade 5.0 / S (Like New)</option>
-                <option value="4.5">Grade 4.5 (Excellent)</option>
-                <option value="4.0">Grade 4.0 (Good)</option>
-              </select>
-            </Field>
-
-            <Field label="Year Range" className="col-span-6 md:col-span-2">
-              <select
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className="glass-input text-xs font-semibold"
-              >
-                <option value="">All Years</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-                <option value="2021">2021</option>
-                <option value="2020">2020</option>
-              </select>
-            </Field>
-
-            <Field label="Stock ID / Lot #" className="col-span-12 md:col-span-2">
-              <input
-                type="text"
-                value={stockId}
-                onChange={(e) => setStockId(e.target.value)}
-                className="glass-input text-xs font-semibold"
-                placeholder="e.g. Lot #8821, GT-R"
-              />
-            </Field>
-
-            <div className="col-span-12 md:col-span-2">
-              <button
-                type="button"
-                onClick={handleSearch}
-                className="red-gradient-btn flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-extrabold tracking-wider"
-              >
-                <Search size={16} /> SEARCH LOTS
-              </button>
             </div>
           </div>
         </div>
@@ -267,7 +270,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="mb-1.5 block text-[11px] font-extrabold tracking-wider text-zinc-600 uppercase">
+      <label className="mb-1 block text-[10px] font-extrabold tracking-wider text-zinc-700 uppercase">
         {label}
       </label>
       {children}

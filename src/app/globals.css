@@ -157,3 +157,84 @@ select.glass-input {
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Racing Speed & Acceleration Keyframes */
+@keyframes speedStreak {
+  0% {
+    transform: translateX(-120%) scaleX(0.3);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  55% {
+    transform: translateX(120%) scaleX(2.8);
+    opacity: 1;
+  }
+  85% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateX(260%) scaleX(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes slowToFastDrive {
+  0% { transform: scale(1) translateX(0); }
+  35% { transform: scale(1.015) translateX(4px); }
+  65% { transform: scale(1.04) translateX(-6px); }
+  88% { transform: scale(1.005) translateX(2px); }
+  100% { transform: scale(1) translateX(0); }
+}
+
+@keyframes realCarDriveMotion {
+  0% {
+    transform: translateX(-120%) scale(0.85);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  35% {
+    /* Slow cruising phase */
+    transform: translateX(15%) scale(0.95);
+    opacity: 1;
+  }
+  50% {
+    /* Slow pause before launch */
+    transform: translateX(30%) scale(1);
+    opacity: 1;
+  }
+  75% {
+    /* NITRO BOOST - FAST ACCELERATION */
+    transform: translateX(120%) scale(1.18);
+    opacity: 1;
+    filter: drop-shadow(-15px 0 30px rgba(220, 38, 38, 0.9));
+  }
+  95% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(240%) scale(1.25);
+    opacity: 0;
+  }
+}
+
+.animate-real-car-motion {
+  animation: realCarDriveMotion 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-speed-streak {
+  animation: speedStreak 3.2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.animate-speed-streak-delayed {
+  animation: speedStreak 4.5s cubic-bezier(0.77, 0, 0.175, 1) 1.6s infinite;
+}
+
+.animate-slow-fast-drive {
+  animation: slowToFastDrive 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+

@@ -70,14 +70,14 @@ export default function Header({
             className="h-10 sm:h-12 lg:h-[3.25rem]"
             linkTo="/"
           />
-          <div className="hidden border-l border-zinc-200 pl-3 lg:block">
+          {/* <div className="hidden border-l border-zinc-200 pl-3 lg:block">
             <span className="block text-[11px] font-extrabold tracking-[0.14em] text-red-600">
-              JAPAN VEHICLE AUCTIONS
+              SAS3
             </span>
             <span className="block text-[10px] font-medium text-zinc-500">
               Premium Global Import Desk
             </span>
-          </div>
+          </div> */}
         </div>
 
         {/* Center nav — desktop */}
@@ -168,7 +168,7 @@ export default function Header({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-800 transition hover:border-zinc-300 hover:bg-zinc-50 sm:px-3",
                   activeAuth === "login" &&
-                    "border-red-600 bg-red-50 text-red-700",
+                  "border-red-600 bg-red-50 text-red-700",
                 )}
               >
                 <User size={14} strokeWidth={2.25} />
