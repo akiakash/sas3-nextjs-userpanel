@@ -15,8 +15,9 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const rawApiUrl =
+  process.env.NEXT_PUBLIC_API_URL ?? "https://sas3.xorcodes.com";
+const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
 
 export function getApiBaseUrl(): string {
   return API_BASE_URL;

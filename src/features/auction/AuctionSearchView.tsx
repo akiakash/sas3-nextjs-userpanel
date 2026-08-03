@@ -402,8 +402,7 @@ export default function AuctionSearchView() {
             <strong>Cannot load auction data</strong>
             <p>{filtersError ?? 'Unknown error'}</p>
             <p className="auction-error-hint">
-              Ensure NestJS is running on port 3001, then retry. API proxy: <code>/backend</code> →{' '}
-              {process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}
+              Ensure the backend service is running and accessible. API URL: <code>{process.env.NEXT_PUBLIC_API_URL ?? 'https://sas3.xorcodes.com'}</code>
             </p>
             <button
               type="button"

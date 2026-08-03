@@ -387,7 +387,7 @@ export async function getFilters(
 
   throw new Error(
     lastError?.message === "Failed to fetch"
-      ? "Could not reach the API. Ensure the NestJS backend is running on port 3001."
+      ? "Could not reach the API. Ensure the NestJS backend is running and accessible."
       : (lastError?.message ??
           "No auction filter data returned. Check that the NestJS backend is running and has completed its Aleado sync."),
   );
