@@ -5,6 +5,38 @@
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 
+const PREFERRED_AUCTION_MAKES = [
+  'Toyota',
+  'Nissan',
+  'Honda',
+  'Suzuki',
+  'Daihatsu',
+  'Mazda',
+  'Mitsubishi',
+  'Subaru',
+  'Mercedes Benz',
+  'BMW',
+  'Volkswagen',
+  'Lexus',
+  'Audi',
+  'Isuzu',
+  'Mini',
+  'Hino',
+  'Porsche',
+  'Other Technics',
+  'Volvo',
+  'Jeep',
+];
+
+/** Keep sample spellings such as BMW and Mercedes Benz. */
+export function formatMakeLabel(value: string): string {
+  const trimmed = value.trim();
+  const match = PREFERRED_AUCTION_MAKES.find(
+    (name) => name.toLowerCase() === trimmed.toLowerCase(),
+  );
+  return match ?? trimmed;
+}
+
 export function formatAuctionDateLabel(iso: string): string {
   const d = new Date(`${iso}T12:00:00+09:00`);
   if (Number.isNaN(d.getTime())) return iso;

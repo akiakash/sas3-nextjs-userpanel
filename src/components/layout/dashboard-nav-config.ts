@@ -6,29 +6,33 @@ import {
   Car,
   MessageSquare,
   Heart,
-  Star,
   User,
   Store,
   type LucideIcon,
 } from "lucide-react";
+import type { PortalSummary } from "@/lib/portal-api";
 
 export type DashboardNavItem = {
   label: string;
   to: string;
   icon: LucideIcon;
-  badge?: number;
+  badgeKey?: keyof PortalSummary;
   exact?: boolean;
 };
 
 export const dashboardNavItems: DashboardNavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, exact: true },
   { label: "Live Auction", to: "/vehicles/auction", icon: Car },
-  { label: "Orders", to: "/dashboard/orders", icon: ShoppingBag, badge: 5 },
+  { label: "Orders", to: "/dashboard/orders", icon: ShoppingBag, badgeKey: "orders" },
   { label: "Payments", to: "/dashboard/payments", icon: CreditCard },
-  { label: "Bids", to: "/dashboard/bids", icon: Gavel, badge: 8 },
-  { label: "Negotiations", to: "/dashboard/negotiations", icon: MessageSquare, badge: 2 },
-  { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart },
-  { label: "Favourites", to: "/dashboard/favourites", icon: Star },
+  { label: "Bids", to: "/dashboard/bids", icon: Gavel, badgeKey: "bids" },
+  {
+    label: "Negotiations",
+    to: "/dashboard/negotiations",
+    icon: MessageSquare,
+    badgeKey: "negotiations",
+  },
+  { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart, badgeKey: "wishlist" },
   { label: "Portfolio", to: "/dashboard/portfolio", icon: Store },
   { label: "Profile", to: "/dashboard/profile", icon: User },
 ];

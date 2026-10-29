@@ -174,14 +174,22 @@ function NegotiationsDashboard() {
                 <p className="line-clamp-1 text-xs font-bold text-zinc-900">
                   {t.vehicleTitle}
                 </p>
-                {t.replyNeeded === false && (
-                  <span className="shrink-0 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold uppercase text-emerald-700">
-                    Replied
+                <div className="flex shrink-0 items-center gap-1">
+                  <span className="rounded-full bg-zinc-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-600">
+                    {t.sourceType === "stock" ? "Stock" : "Auction"}
                   </span>
-                )}
+                  {t.replyNeeded === false && (
+                    <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold uppercase text-emerald-700">
+                      Replied
+                    </span>
+                  )}
+                </div>
               </div>
               <p className="mt-0.5 text-[10px] font-semibold text-zinc-500">
-                {t.referenceCode} · Lot #{t.lotNo || "—"}
+                {t.referenceCode} ·{" "}
+                {t.sourceType === "stock"
+                  ? `Stock #${t.lotNo || "—"}`
+                  : `Lot #${t.lotNo || "—"}`}
               </p>
               <p className="mt-1 text-xs font-black text-red-600">
                 {formatYen(t.offerAmount)}
@@ -211,14 +219,19 @@ function NegotiationsDashboard() {
             <header className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-200 px-4 py-3">
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-                  {detail.referenceCode} · {detail.auctionName || "Auction"}
+                  {detail.referenceCode} ·{" "}
+                  {detail.sourceType === "stock"
+                    ? "Stock"
+                    : detail.auctionName || "Auction"}
                 </p>
                 <h3 className="truncate text-sm font-black text-zinc-900">
                   {detail.vehicleTitle}
                 </h3>
                 <p className="text-xs text-zinc-500">
-                  Lot #{detail.lotNo || "—"} · {detail.lotDate || "—"} ·{" "}
-                  {detail.modelTypeEn || "—"}
+                  {detail.sourceType === "stock"
+                    ? `Stock #${detail.lotNo || "—"}`
+                    : `Lot #${detail.lotNo || "—"}`}{" "}
+                  · {detail.lotDate || "—"} · {detail.modelTypeEn || "—"}
                 </p>
               </div>
               <div className="rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 text-right">
@@ -364,12 +377,21 @@ function NegotiationsDashboard() {
                   {detail.modelTypeEn || "—"}
                 </dd>
               </div>
-              <Link
-                href={`/vehicles/auction/${encodeURIComponent(detail.lotId)}`}
-                className="inline-block font-bold text-brand-red hover:underline"
-              >
-                View lot details →
-              </Link>
+              {detail.sourceType === "stock" && detail.orderEntryId ? (
+                <Link
+                  href={`/vehicles/stock/${encodeURIComponent(detail.orderEntryId)}`}
+                  className="inline-block font-bold text-brand-red hover:underline"
+                >
+                  View stock details →
+                </Link>
+              ) : detail.lotId ? (
+                <Link
+                  href={`/vehicles/auction/${encodeURIComponent(detail.lotId)}`}
+                  className="inline-block font-bold text-brand-red hover:underline"
+                >
+                  View lot details →
+                </Link>
+              ) : null}
             </dl>
           </div>
         </aside>

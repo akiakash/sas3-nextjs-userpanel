@@ -418,7 +418,7 @@ export function ResultsGrid({
                       >
                         {lot.modelNameEn || lot.company || "—"}
                       </Link>
-                      <span>{lot.modelYearEn || "—"}</span>
+                      <span>Year {lot.modelYearEn.trim() || "—"}</span>
                       {badges.length > 0 && (
                         <div className="auction-legacy-equip-badges">
                           {badges.map((b) => (
@@ -464,6 +464,14 @@ export function ResultsGrid({
                           lot.endPrice,
                           resultDisplay.tone,
                         )}
+                      </span>
+                      <span className="auction-legacy-price-line">
+                        <span className="auction-legacy-price-label">
+                          Average
+                        </span>
+                        {formatAuctionPrice(lot.averagePrice, {
+                          allowZero: true,
+                        })}
                       </span>
                     </StackCell>
                     <td className="auction-legacy-result-cell">

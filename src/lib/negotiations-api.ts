@@ -19,7 +19,9 @@ export type NegotiationThreadSummary = {
   customerName: string | null;
   customerEmail: string | null;
   customerReference: string | null;
-  lotId: string;
+  sourceType?: "auction" | "stock";
+  orderEntryId?: string | null;
+  lotId: string | null;
   lotNo: string | null;
   auctRef: string | null;
   lotDate: string | null;
@@ -50,7 +52,8 @@ export type NegotiationThreadDetail = NegotiationThreadSummary & {
 };
 
 export type CreateNegotiationPayload = {
-  lotId: string;
+  lotId?: string;
+  orderEntryId?: string;
   offerAmount: number;
   note?: string;
 };

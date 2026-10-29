@@ -6,12 +6,13 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
 import * as authApi from "@/lib/auth-api";
-import { getStoredToken } from "@/lib/api-client";
-import { ensureSessionCookie } from "@/lib/auth-session";
+import { ApiError, getStoredToken } from "@/lib/api-client";
+import { syncSessionCookie } from "@/lib/auth-session";
 import type { Customer, LoginPayload, RegisterPayload } from "@/types/customer";
 
 interface AuthContextValue {
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Customer | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const authEpoch = useRef(0);
 
   const refreshUser = useCallback(async () => {
     const storedToken = getStoredToken();
@@ -41,15 +43,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const epoch = authEpoch.current;
     try {
       const profile = await authApi.getMe(storedToken);
-      ensureSessionCookie();
+      // A newer login/logout happened while /me was in flight — ignore this result.
+      if (epoch !== authEpoch.current || getStoredToken() !== storedToken) {
+        return;
+      }
+      await syncSessionCookie();
       setUser(profile);
       setToken(storedToken);
-    } catch {
-      authApi.logout();
-      setUser(null);
-      setToken(null);
+    } catch (error) {
+      if (epoch !== authEpoch.current || getStoredToken() !== storedToken) {
+        return;
+      }
+      // Only wipe the session on auth failure — not on network blips.
+      if (error instanceof ApiError && error.status === 401) {
+        authApi.logout();
+        setUser(null);
+        setToken(null);
+      }
     }
   }, []);
 
@@ -58,7 +71,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refreshUser]);
 
   const login = useCallback(async (payload: LoginPayload) => {
+    authEpoch.current += 1;
     const response = await authApi.login(payload);
+    await syncSessionCookie();
     setUser(response.user);
     setToken(response.accessToken);
     return response.user;
@@ -69,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    authEpoch.current += 1;
     authApi.logout();
     setUser(null);
     setToken(null);

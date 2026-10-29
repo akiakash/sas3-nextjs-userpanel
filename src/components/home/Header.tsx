@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   User,
   UserPlus,
-  Calculator,
+  MessageSquare,
   Headset,
   LayoutDashboard,
   LogOut,
@@ -18,20 +18,18 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Live Auctions", href: "/vehicles/auction", badge: "LIVE" },
-  { label: "Featured Inventory", href: "#featured", badge: "" },
-  { label: "How to Buy", href: "#process", badge: "" },
-  { label: "Company & Bank", href: "#company", badge: "" },
+  { label: "Featured Inventory", href: "/#featured", badge: "" },
+  { label: "How to Buy", href: "/#process", badge: "" },
+  { label: "Send Inquiry", href: "/inquiry", badge: "" },
 ];
 
 type HeaderProps = {
   activeAuth?: "login" | "register";
-  onOpenCifModal?: () => void;
   onOpenChatModal?: () => void;
 };
 
 export default function Header({
   activeAuth,
-  onOpenCifModal,
   onOpenChatModal,
 }: HeaderProps) {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -51,11 +49,7 @@ export default function Header({
     };
   }, [mobileOpen]);
 
-  function handleNavClick(href: string, e: MouseEvent) {
-    if (href === "#cif-calculator" && onOpenCifModal) {
-      e.preventDefault();
-      onOpenCifModal();
-    }
+  function handleNavClick(_href: string, _e: MouseEvent) {
     setMobileOpen(false);
   }
 
@@ -123,14 +117,13 @@ export default function Header({
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            onClick={onOpenCifModal}
+          <Link
+            href="/inquiry"
             className="hidden items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[12px] font-semibold text-red-700 transition hover:bg-red-100 lg:inline-flex"
           >
-            <Calculator size={14} strokeWidth={2.25} />
-            CIF Calculator
-          </button>
+            <MessageSquare size={14} strokeWidth={2.25} />
+            Send Inquiry
+          </Link>
 
           <button
             type="button"
@@ -241,17 +234,14 @@ export default function Header({
               );
             })}
 
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                onOpenCifModal?.();
-              }}
+            <Link
+              href="/inquiry"
+              onClick={() => setMobileOpen(false)}
               className="mt-1 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-700 lg:hidden"
             >
-              <Calculator size={16} />
-              CIF Calculator
-            </button>
+              <MessageSquare size={16} />
+              Send Inquiry
+            </Link>
           </nav>
         </div>
       )}

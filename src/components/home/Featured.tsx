@@ -2,17 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calculator, ArrowRight, Flame, Loader2, X, Filter } from "lucide-react";
-import CifCalculatorModal from "@/components/customer/CifCalculatorModal";
+import { ArrowRight, Flame, Loader2 } from "lucide-react";
+import PhotoSlideshow from "@/components/home/PhotoSlideshow";
 import { type AuctionLot, searchLots } from "@/lib/auction-api";
 import { formatAuctionPrice } from "@/features/auction/auction-utils";
-import type { SearchFilters } from "@/components/home/Hero";
-
-type FeaturedProps = {
-  onOpenChatModal?: () => void;
-  searchFilters?: SearchFilters;
-  onClearFilters?: () => void;
-};
 
 function lotTitle(lot: AuctionLot): string {
   return (
@@ -23,20 +16,10 @@ function lotTitle(lot: AuctionLot): string {
   );
 }
 
-export default function Featured({ searchFilters, onClearFilters }: FeaturedProps) {
+export default function Featured() {
   const [lots, setLots] = useState<AuctionLot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [cifLot, setCifLot] = useState<AuctionLot | null>(null);
-
-  const hasActiveFilters = Boolean(
-    searchFilters &&
-      (searchFilters.make ||
-        searchFilters.model ||
-        searchFilters.grade ||
-        searchFilters.year ||
-        searchFilters.stockId)
-  );
 
   useEffect(() => {
     let cancelled = false;
@@ -45,38 +28,20 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
       setLoading(true);
       setError(null);
       try {
-        const queryParams: Parameters<typeof searchLots>[0] = {
+        const res = await searchLots({
           result: ["available"],
           sort: "lot_date",
           seq: "DESC",
           page: 0,
           per_page: 8,
-        };
-
-        if (searchFilters?.make) {
-          queryParams.marka_name = [searchFilters.make];
-        }
-        if (searchFilters?.model) {
-          queryParams.model_name = [searchFilters.model];
-        }
-        if (searchFilters?.grade) {
-          queryParams.grade = [searchFilters.grade];
-        }
-        if (searchFilters?.year) {
-          queryParams.year_from = Number(searchFilters.year);
-        }
-        if (searchFilters?.stockId?.trim()) {
-          queryParams.lot_no = searchFilters.stockId.trim();
-        }
-
-        const res = await searchLots(queryParams);
+        });
         if (!cancelled) setLots(res.data);
       } catch (err) {
         if (!cancelled) {
           setError(
             err instanceof Error
               ? err.message
-              : "Could not load live auction lots"
+              : "Could not load live auction lots",
           );
         }
       } finally {
@@ -87,18 +52,12 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
     return () => {
       cancelled = true;
     };
-  }, [
-    searchFilters?.make,
-    searchFilters?.model,
-    searchFilters?.grade,
-    searchFilters?.year,
-    searchFilters?.stockId,
-  ]);
+  }, []);
 
   return (
     <section
       id="live-auctions"
-      className="relative border-t border-zinc-200/80 bg-zinc-50/50 py-16 text-zinc-900 scroll-mt-12"
+      className="relative scroll-mt-12 border-t border-zinc-200/80 bg-zinc-50/50 py-16 text-zinc-900"
     >
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-6">
@@ -111,7 +70,8 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
               REAL-TIME BIDDING HALL
             </h2>
             <p className="mt-2 max-w-xl text-sm text-zinc-500">
-              Real lots synced from USS & JAA halls. Filter by make, model, or grade.
+              Real lots synced from USS &amp; JAA halls. Browse the full portal
+              for advanced search.
             </p>
           </div>
 
@@ -124,59 +84,10 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
           </Link>
         </div>
 
-        {/* Active Filters Pill Bar */}
-        {hasActiveFilters && (
-          <div className="mb-6 flex flex-wrap items-center gap-2 rounded-2xl border border-red-200 bg-red-50/80 p-3.5 text-xs text-zinc-800">
-            <span className="flex items-center gap-1.5 font-extrabold text-red-700 uppercase tracking-wider pr-2 border-r border-red-200">
-              <Filter size={14} /> Active Filters:
-            </span>
-
-            {searchFilters?.make && (
-              <span className="rounded-lg bg-white px-3 py-1 font-bold shadow-sm border border-red-200 text-zinc-800">
-                Make: <span className="text-red-600">{searchFilters.make}</span>
-              </span>
-            )}
-
-            {searchFilters?.model && (
-              <span className="rounded-lg bg-white px-3 py-1 font-bold shadow-sm border border-red-200 text-zinc-800">
-                Model: <span className="text-red-600">{searchFilters.model}</span>
-              </span>
-            )}
-
-            {searchFilters?.grade && (
-              <span className="rounded-lg bg-white px-3 py-1 font-bold shadow-sm border border-red-200 text-zinc-800">
-                Grade: <span className="text-red-600">{searchFilters.grade}</span>
-              </span>
-            )}
-
-            {searchFilters?.year && (
-              <span className="rounded-lg bg-white px-3 py-1 font-bold shadow-sm border border-red-200 text-zinc-800">
-                Year: <span className="text-red-600">{searchFilters.year}</span>
-              </span>
-            )}
-
-            {searchFilters?.stockId && (
-              <span className="rounded-lg bg-white px-3 py-1 font-bold shadow-sm border border-red-200 text-zinc-800">
-                Lot/ID: <span className="text-red-600">{searchFilters.stockId}</span>
-              </span>
-            )}
-
-            {onClearFilters && (
-              <button
-                type="button"
-                onClick={onClearFilters}
-                className="ml-auto inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1 font-bold text-white shadow hover:bg-red-700 transition"
-              >
-                <X size={13} /> Clear Filters
-              </button>
-            )}
-          </div>
-        )}
-
         {loading && (
           <div className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-200 bg-white py-16 text-sm font-semibold text-zinc-500 shadow-sm">
             <Loader2 className="h-5 w-5 animate-spin text-red-600" />
-            Filtering live auction lots…
+            Loading live auction lots…
           </div>
         )}
 
@@ -195,65 +106,52 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
         {!loading && !error && lots.length === 0 && (
           <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-12 text-center text-sm text-zinc-500 shadow-sm">
             <p className="font-semibold text-zinc-800">
-              No matching live auction lots found for this specific filter.
+              No live auction lots available right now.
             </p>
-            <div className="mt-4 flex items-center justify-center gap-3">
-              {onClearFilters && (
-                <button
-                  type="button"
-                  onClick={onClearFilters}
-                  className="rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-zinc-200"
-                >
-                  Clear Filters
-                </button>
-              )}
-              <Link
-                href="/vehicles/auction"
-                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-extrabold text-white shadow hover:bg-red-700"
-              >
-                Open Full Auction Search
-              </Link>
-            </div>
+            <Link
+              href="/vehicles/auction"
+              className="mt-4 inline-flex rounded-xl bg-red-600 px-4 py-2 text-xs font-extrabold text-white shadow hover:bg-red-700"
+            >
+              Open Full Auction Search
+            </Link>
           </div>
         )}
 
         {!loading && !error && lots.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {lots.map((lot) => {
-              const img = lot.imageUrls[0];
+              const photos = (lot.imageUrls ?? []).filter(
+                (url) => typeof url === "string" && url.trim().length > 0,
+              );
               const title = lotTitle(lot);
               return (
                 <article
                   key={lot.lotId}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-500/50 hover:shadow-xl"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-500/50 hover:shadow-xl"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100">
-                    {img ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={img}
-                        alt={title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-xs font-semibold text-zinc-400">
-                        No photo
-                      </div>
-                    )}
+                  <div className="relative shrink-0 overflow-hidden bg-zinc-100">
+                    <PhotoSlideshow
+                      urls={photos}
+                      alt={title}
+                      aspectClassName="aspect-[4/3]"
+                    />
 
-                    <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+                    <div className="pointer-events-none absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-md">
                       <span className="h-1.5 w-1.5 animate-ping rounded-full bg-red-500" />
                       <span>
                         {lot.auctionName || "Auction"} • Lot #{lot.bid || "—"}
                       </span>
                     </div>
 
-                    {lot.scoresEn && (
-                      <div className="absolute right-3 top-3 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[11px] font-black text-red-700 backdrop-blur-md">
+                    {lot.scoresEn && photos.length <= 1 ? (
+                      <div className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[11px] font-black text-red-700 backdrop-blur-md">
                         GRADE {lot.scoresEn}
                       </div>
-                    )}
+                    ) : lot.scoresEn ? (
+                      <div className="pointer-events-none absolute bottom-3 left-3 z-20 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[11px] font-black text-red-700 backdrop-blur-md">
+                        GRADE {lot.scoresEn}
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="flex flex-1 flex-col p-5">
@@ -293,22 +191,12 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Link
-                        href={`/vehicles/auction/${encodeURIComponent(lot.lotId)}`}
-                        className="red-gradient-btn flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold"
-                      >
-                        VIEW LOT DETAILS
-                      </Link>
-
-                      <button
-                        type="button"
-                        onClick={() => setCifLot(lot)}
-                        className="flex w-full items-center justify-center gap-1 rounded-xl border border-red-200 bg-red-50 py-2 text-[11px] font-bold text-red-700 transition hover:bg-red-100"
-                      >
-                        <Calculator size={13} /> CIF Rates
-                      </button>
-                    </div>
+                    <Link
+                      href={`/vehicles/auction/${encodeURIComponent(lot.lotId)}`}
+                      className="red-gradient-btn flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold"
+                    >
+                      VIEW LOT DETAILS
+                    </Link>
                   </div>
                 </article>
               );
@@ -316,13 +204,6 @@ export default function Featured({ searchFilters, onClearFilters }: FeaturedProp
           </div>
         )}
       </div>
-
-      <CifCalculatorModal
-        isOpen={Boolean(cifLot)}
-        onClose={() => setCifLot(null)}
-        initialFob={Number(cifLot?.startPrice) || 30000}
-        carName={cifLot ? lotTitle(cifLot) : "Selected Car"}
-      />
     </section>
   );
 }

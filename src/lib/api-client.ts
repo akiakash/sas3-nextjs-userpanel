@@ -16,7 +16,7 @@ export class ApiError extends Error {
 }
 
 const rawApiUrl =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://sas3.xorcodes.com";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
 
 export function getApiBaseUrl(): string {
@@ -81,7 +81,12 @@ export async function apiClient<T>(
 
   if (!response.ok) {
     if (response.status === 401 && !skipAuthRedirect) {
-      redirectToLoginOnUnauthorized();
+      // Only kick the user out if this request used the *current* token.
+      // Avoids a race where a stale /me 401 clears a just-completed login.
+      const current = getStoredToken();
+      if (authToken && current && authToken === current) {
+        redirectToLoginOnUnauthorized();
+      }
     }
 
     const message =

@@ -1,50 +1,69 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-
-import { User, Building2, ShieldCheck, Mail, Phone, Lock, Save, Globe, ExternalLink } from "lucide-react";
+import { ExternalLink, Lock, Save, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
-import { mockProfile } from "@/lib/dummy-data";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 import { updateProfile } from "@/lib/auth-api";
 import { ApiError } from "@/lib/api-client";
 
+type ProfileForm = {
+  title: string;
+  name: string;
+  country: string;
+  email: string;
+  telMobile: string;
+};
+
 function ProfileDashboard() {
   const { user, refreshUser } = useAuth();
-  const [profile, setProfile] = useState(mockProfile);
-  const [password, setPassword] = useState("••••••••");
+  const [profile, setProfile] = useState<ProfileForm>({
+    title: "Mr.",
+    name: "",
+    country: "",
+    email: "",
+    telMobile: "",
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setProfile((prev) => ({
-        ...prev,
-        title: user.title,
-        name: user.fullName,
-        country: user.country,
-        email: user.email,
-        telMobile: user.phone,
-      }));
-    }
+    if (!user) return;
+    setProfile({
+      title: user.title || "Mr.",
+      name: user.fullName || "",
+      country: user.country || "",
+      email: user.email || "",
+      telMobile: user.phone || "",
+    });
   }, [user]);
 
-  // Field change handler
-  const handleChange = (key: keyof typeof mockProfile, value: any) => {
-    setProfile((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const initials = useMemo(() => {
+    const parts = profile.name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "—";
+    return parts
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? "")
+      .join("");
+  }, [profile.name]);
+
+  const statusLabel =
+    user?.status === "permitted"
+      ? "Account permitted"
+      : user?.status === "blocked"
+        ? "Account blocked"
+        : "Pending approval";
+
+  const handleChange = (key: keyof ProfileForm, value: string) => {
+    setProfile((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       await updateProfile({
         title: profile.title,
@@ -54,43 +73,42 @@ function ProfileDashboard() {
       });
       await refreshUser();
       setIsEditing(false);
-      toast.success("Profile Updated Successfully!", {
-        description: "Your importer ledger records have been securely synced.",
-      });
+      toast.success("Profile updated");
     } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(error.message);
-      } else {
-        toast.error("Failed to update profile. Please try again.");
-      }
+      toast.error(
+        error instanceof ApiError
+          ? error.message
+          : "Failed to update profile. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const labelCls = "block text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ink)]/55 dark:text-zinc-400";
-  const inputCls = "w-full rounded-xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-zinc-900/60 px-4 py-2.5 text-xs font-semibold outline-none transition focus:border-[var(--brand)] dark:text-white disabled:opacity-60 disabled:cursor-not-allowed";
+  const labelCls =
+    "block text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ink)]/55 dark:text-zinc-400";
+  const inputCls =
+    "w-full rounded-xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-zinc-900/60 px-4 py-2.5 text-xs font-semibold outline-none transition focus:border-[var(--brand)] dark:text-white disabled:opacity-60 disabled:cursor-not-allowed";
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      {/* Profile Overview Card Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 p-6 backdrop-blur-xl flex flex-col sm:flex-row items-center gap-6">
-        <div className="flex h-20 w-20 shrink-0 select-none items-center justify-center rounded-full bg-[var(--brand)] text-white text-3xl font-black shadow-md border-4 border-white/30">
-          DK
+      <div className="relative flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-white/20 bg-white/40 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/40 sm:flex-row">
+        <div className="flex h-20 w-20 shrink-0 select-none items-center justify-center rounded-full border-4 border-white/30 bg-[var(--brand)] text-2xl font-black text-white shadow-md">
+          {initials}
         </div>
         <div className="flex-1 text-center sm:text-left">
-          <h2 className="text-xl font-black text-[var(--ink)] dark:text-white leading-none">
+          <h2 className="text-xl font-black leading-none text-[var(--ink)] dark:text-white">
             {profile.title} {profile.name}
           </h2>
           <p className="mt-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-            {profile.company} · Customer reference:{" "}
+            {profile.email || "—"} · Customer reference:{" "}
             <span className="font-mono font-bold text-[var(--brand)]">
               {user?.referenceCode ?? "—"}
             </span>
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-              <ShieldCheck className="h-3.5 w-3.5" /> Commercial Status Verified
+              <ShieldCheck className="h-3.5 w-3.5" /> {statusLabel}
             </span>
             <Link
               href="/dashboard/portfolio"
@@ -101,36 +119,37 @@ function ProfileDashboard() {
           </div>
         </div>
         <button
+          type="button"
           onClick={() => setIsEditing(!isEditing)}
-          className={`h-10 px-5 rounded-xl text-xs font-bold uppercase tracking-wider transition ${
+          className={`h-10 rounded-xl px-5 text-xs font-bold uppercase tracking-wider transition ${
             isEditing
               ? "border border-rose-500/20 bg-rose-500/10 text-rose-600 hover:bg-rose-500/25"
               : "bg-gradient-to-b from-[var(--brand)] to-[var(--brand-dark)] text-white hover:brightness-110"
           }`}
         >
-          {isEditing ? "Cancel Editing" : "Modify Credentials"}
+          {isEditing ? "Cancel Editing" : "Edit Profile"}
         </button>
       </div>
 
-      {/* Main Profile Form */}
       <form onSubmit={handleSave} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 rounded-xl border border-white/20 dark:border-white/10 bg-white/20 dark:bg-zinc-950/20 p-1.5 backdrop-blur-sm">
-            <TabsTrigger value="personal" className="rounded-lg text-xs font-black uppercase tracking-wider py-2">
+          <TabsList className="grid w-full grid-cols-2 rounded-xl border border-white/20 bg-white/20 p-1.5 backdrop-blur-sm dark:border-white/10 dark:bg-zinc-950/20">
+            <TabsTrigger
+              value="personal"
+              className="rounded-lg py-2 text-xs font-black uppercase tracking-wider"
+            >
               Personal Contacts
             </TabsTrigger>
-            <TabsTrigger value="company" className="rounded-lg text-xs font-black uppercase tracking-wider py-2">
-              Corporate Details
-            </TabsTrigger>
-            <TabsTrigger value="security" className="rounded-lg text-xs font-black uppercase tracking-wider py-2">
-              Securities & Subscriptions
+            <TabsTrigger
+              value="security"
+              className="rounded-lg py-2 text-xs font-black uppercase tracking-wider"
+            >
+              Account
             </TabsTrigger>
           </TabsList>
 
-          {/* TAB 1: Personal Contacts */}
           <TabsContent value="personal" className="mt-4 focus-visible:outline-none">
-            <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 p-6 backdrop-blur-xl grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {/* Title Pick */}
+            <div className="grid grid-cols-1 gap-5 rounded-2xl border border-white/20 bg-white/40 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/40 sm:grid-cols-2">
               <div className="space-y-2">
                 <label className={labelCls}>Title</label>
                 <select
@@ -146,7 +165,6 @@ function ProfileDashboard() {
                 </select>
               </div>
 
-              {/* Name */}
               <div className="space-y-2">
                 <label className={labelCls}>Full Name</label>
                 <input
@@ -155,22 +173,23 @@ function ProfileDashboard() {
                   value={profile.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   className={inputCls}
+                  required
                 />
               </div>
 
-              {/* Email */}
               <div className="space-y-2">
                 <label className={labelCls}>Email Address</label>
                 <input
                   type="email"
-                  disabled={!isEditing}
+                  disabled
                   value={profile.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
                   className={inputCls}
                 />
+                <p className="text-[10px] text-zinc-400">
+                  Email is managed by SAS3 support and cannot be changed here.
+                </p>
               </div>
 
-              {/* Mobile Phone */}
               <div className="space-y-2">
                 <label className={labelCls}>Tel / Mobile</label>
                 <input
@@ -182,97 +201,7 @@ function ProfileDashboard() {
                 />
               </div>
 
-              {/* Fax */}
-              <div className="space-y-2">
-                <label className={labelCls}>Fax Number</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.fax}
-                  onChange={(e) => handleChange("fax", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              {/* Skype */}
-              <div className="space-y-2">
-                <label className={labelCls}>Skype ID</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.skype}
-                  onChange={(e) => handleChange("skype", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* TAB 2: Corporate & Address */}
-          <TabsContent value="company" className="mt-4 focus-visible:outline-none">
-            <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 p-6 backdrop-blur-xl grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {/* Company Name */}
               <div className="space-y-2 sm:col-span-2">
-                <label className={labelCls}>Company Name</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.company}
-                  onChange={(e) => handleChange("company", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              {/* Address */}
-              <div className="space-y-2 sm:col-span-2">
-                <label className={labelCls}>Address</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.address}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              {/* City */}
-              <div className="space-y-2">
-                <label className={labelCls}>City</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.city}
-                  onChange={(e) => handleChange("city", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              {/* Province */}
-              <div className="space-y-2">
-                <label className={labelCls}>Province / State</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.province}
-                  onChange={(e) => handleChange("province", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              {/* Post Code */}
-              <div className="space-y-2">
-                <label className={labelCls}>Post Code</label>
-                <input
-                  type="text"
-                  disabled={!isEditing}
-                  value={profile.postCode}
-                  onChange={(e) => handleChange("postCode", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              {/* Country */}
-              <div className="space-y-2">
                 <label className={labelCls}>Country</label>
                 <input
                   type="text"
@@ -285,64 +214,46 @@ function ProfileDashboard() {
             </div>
           </TabsContent>
 
-          {/* TAB 3: Security & Subscriptions */}
           <TabsContent value="security" className="mt-4 focus-visible:outline-none">
-            <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 p-6 backdrop-blur-xl space-y-6">
-              {/* Password change */}
-              <div className="space-y-2 max-w-sm">
-                <label className={labelCls}>Console Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                  <input
-                    type="password"
-                    disabled={!isEditing}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-white/20 dark:border-white/10 bg-white dark:bg-zinc-900/60 pl-10 pr-4 py-2.5 text-xs font-semibold outline-none focus:border-[var(--brand)] disabled:opacity-60"
-                  />
+            <div className="space-y-4 rounded-2xl border border-white/20 bg-white/40 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/40">
+              <div className="flex items-start gap-3 rounded-xl border border-zinc-200/60 bg-white/50 p-4 dark:border-zinc-700 dark:bg-zinc-950/40">
+                <Lock className="mt-0.5 h-4 w-4 text-zinc-400" />
+                <div>
+                  <p className="text-xs font-bold text-[var(--ink)] dark:text-zinc-200">
+                    Password changes
+                  </p>
+                  <p className="mt-1 text-[10px] text-zinc-400">
+                    Contact SAS3 support to reset your console password.
+                  </p>
                 </div>
               </div>
-
-              <div className="h-px bg-white/25" />
-
-              {/* Newsletter Subscription checkbox */}
-              <div className="space-y-2">
-                <label className={labelCls}>Ledger Notifications & Subscriptions</label>
-                <div className="mt-3 flex items-start gap-3">
-                  <Checkbox
-                    id="newsletter"
-                    disabled={!isEditing}
-                    checked={profile.newsletterSubscription}
-                    onCheckedChange={(checked) => handleChange("newsletterSubscription", checked === true)}
-                    className="mt-0.5 cursor-pointer disabled:opacity-50"
-                  />
-                  <div className="grid gap-1.5 leading-none">
-                    <label
-                      htmlFor="newsletter"
-                      className="text-xs font-bold text-[var(--ink)] dark:text-zinc-200 cursor-pointer"
-                    >
-                      Subscribe to SAS3 Newsletter
-                    </label>
-                    <p className="text-[10px] text-zinc-400">
-                      Receive JDM auction forecasts, USS Tokyo loop notifications, and freight updates weekly.
-                    </p>
-                  </div>
+              <dl className="grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className={labelCls}>Reference code</dt>
+                  <dd className="mt-1 font-mono font-bold">
+                    {user?.referenceCode ?? "—"}
+                  </dd>
                 </div>
-              </div>
+                <div>
+                  <dt className={labelCls}>Status</dt>
+                  <dd className="mt-1 font-semibold capitalize">
+                    {user?.status ?? "—"}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </TabsContent>
         </Tabs>
 
-        {/* Save button */}
         {isEditing && (
           <div className="flex justify-end animate-in fade-in slide-in-from-bottom-1 duration-150">
             <Button
               type="submit"
               disabled={loading}
-              className="rounded-xl bg-gradient-to-b from-[var(--brand)] to-[var(--brand-dark)] text-white text-xs font-bold uppercase tracking-wider h-11 px-6 shadow-md hover:brightness-110 active:translate-y-px transition duration-150 cursor-pointer"
+              className="h-11 rounded-xl bg-gradient-to-b from-[var(--brand)] to-[var(--brand-dark)] px-6 text-xs font-bold uppercase tracking-wider text-white shadow-md transition duration-150 hover:brightness-110 active:translate-y-px"
             >
-              <Save className="mr-2 h-4.5 w-4.5" />
-              {loading ? "Saving Changes..." : "Save Settings"}
+              <Save className="mr-2 h-4 w-4" />
+              {loading ? "Saving…" : "Save Settings"}
             </Button>
           </div>
         )}

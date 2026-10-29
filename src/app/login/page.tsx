@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Mail, Eye, EyeOff, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
@@ -10,6 +10,7 @@ import { SiteNav } from "@/components/layout/site-nav";
 import { Sas3Logo } from "@/components/layout/sas3-logo";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/lib/api-client";
+import { syncSessionCookie } from "@/lib/auth-session";
 
 function safeReturnPath(from: string | null): string {
   if (!from || !from.startsWith("/") || from.startsWith("//")) {
@@ -21,11 +22,18 @@ function safeReturnPath(from: string | null): string {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const next = safeReturnPath(searchParams.get("from"));
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace(next);
+    }
+  }, [isAuthenticated, isLoading, next, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,14 +54,11 @@ function LoginForm() {
 
     try {
       const user = await login({ email, password });
-      const next = safeReturnPath(searchParams.get("from"));
+      await syncSessionCookie();
       toast.success(`Welcome back, ${user.fullName}!`, {
-        description:
-          next.startsWith("/vehicles/auction")
-            ? "Opening live auctions..."
-            : "Redirecting to your Operations Center...",
+        description: "Opening your dashboard…",
       });
-      router.push(next);
+      router.replace(next);
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.status === 403) {
@@ -74,6 +79,17 @@ function LoginForm() {
       setLoading(false);
     }
   };
+
+  if (isLoading || isAuthenticated) {
+    return (
+      <div className="flex min-h-screen flex-col bg-gradient-to-b from-zinc-50 via-white to-zinc-100 text-zinc-900">
+        <SiteNav activeAuth="login" />
+        <main className="flex flex-1 items-center justify-center px-4 text-sm font-semibold text-zinc-500">
+          {isAuthenticated ? "Opening your dashboard…" : "Checking session…"}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-zinc-50 via-white to-zinc-100 text-zinc-900">
@@ -175,7 +191,6 @@ function LoginForm() {
     </div>
   );
 }
-
 
 export default function Login() {
   return (

@@ -11,7 +11,6 @@ import {
   Car,
   MessageSquare,
   Heart,
-  Star,
   User,
   Store,
   LogOut,
@@ -19,6 +18,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePortalSummary } from "@/hooks/use-portal-summary";
+import type { PortalSummary } from "@/lib/portal-api";
 
 interface SidebarProps {
   className?: string;
@@ -29,7 +30,7 @@ type NavItem = {
   label: string;
   to: string;
   icon: LucideIcon;
-  badge?: number;
+  badgeKey?: keyof PortalSummary;
   exact?: boolean;
 };
 
@@ -43,7 +44,7 @@ const navSections: NavSection[] = [
     title: "Overview",
     items: [
       { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, exact: true },
-      { label: "Orders", to: "/dashboard/orders", icon: ShoppingBag, badge: 5 },
+      { label: "Orders", to: "/dashboard/orders", icon: ShoppingBag, badgeKey: "orders" },
       { label: "Payments", to: "/dashboard/payments", icon: CreditCard },
     ],
   },
@@ -51,15 +52,19 @@ const navSections: NavSection[] = [
     title: "Auctions",
     items: [
       { label: "Live Auction", to: "/vehicles/auction", icon: Car },
-      { label: "Bids", to: "/dashboard/bids", icon: Gavel, badge: 8 },
-      { label: "Negotiations", to: "/dashboard/negotiations", icon: MessageSquare, badge: 2 },
+      { label: "Bids", to: "/dashboard/bids", icon: Gavel, badgeKey: "bids" },
+      {
+        label: "Negotiations",
+        to: "/dashboard/negotiations",
+        icon: MessageSquare,
+        badgeKey: "negotiations",
+      },
     ],
   },
   {
     title: "Saved",
     items: [
-      { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart },
-      { label: "Favourites", to: "/dashboard/favourites", icon: Star },
+      { label: "Wishlist", to: "/dashboard/wishlist", icon: Heart, badgeKey: "wishlist" },
     ],
   },
   {
@@ -73,9 +78,11 @@ const navSections: NavSection[] = [
 
 function NavLink({
   item,
+  badge,
   onClose,
 }: {
   item: NavItem;
+  badge?: number;
   onClose?: () => void;
 }) {
   const pathname = usePathname();
@@ -110,7 +117,7 @@ function NavLink({
         strokeWidth={isActive ? 2.25 : 1.75}
       />
       <span className="flex-1 truncate">{item.label}</span>
-      {item.badge != null && (
+      {badge != null && badge > 0 ? (
         <span
           className={cn(
             "inline-flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10px] font-bold tabular-nums",
@@ -119,14 +126,15 @@ function NavLink({
               : "bg-zinc-800 text-zinc-400 ring-1 ring-zinc-700/80"
           )}
         >
-          {item.badge}
+          {badge}
         </span>
-      )}
+      ) : null}
     </Link>
   );
 }
 
 export function Sidebar({ className, onClose }: SidebarProps) {
+  const { summary } = usePortalSummary();
   return (
     <aside
       className={cn(
@@ -164,7 +172,13 @@ export function Sidebar({ className, onClose }: SidebarProps) {
             <ul className="space-y-0.5">
               {section.items.map((item) => (
                 <li key={item.to}>
-                  <NavLink item={item} onClose={onClose} />
+                  <NavLink
+                    item={item}
+                    badge={
+                      item.badgeKey != null ? summary[item.badgeKey] : undefined
+                    }
+                    onClose={onClose}
+                  />
                 </li>
               ))}
             </ul>
