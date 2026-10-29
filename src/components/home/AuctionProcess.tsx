@@ -34,11 +34,11 @@ export default function AuctionProcess() {
     <section id="process" className="relative border-b border-zinc-200/80 bg-white py-20 text-zinc-900 overflow-hidden">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
         <div className="mb-12 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-bold text-red-700">
-            <ShieldCheck size={14} /> LICENSED JAPAN EXPORT SYSTEM
+          <div className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-red-700">
+            <ShieldCheck size={14} /> Licensed Japan export system
           </div>
-          <h2 className="mt-3 text-3xl font-extrabold text-zinc-900 tracking-tight sm:text-5xl">
-            HOW TO IMPORT VEHICLES FROM JAPAN
+          <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-wide text-zinc-900 sm:text-5xl">
+            How to import vehicles from Japan
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-sm text-zinc-600">
             Simple, transparent 4-step process designed for individual buyers, car dealers, and global importers.

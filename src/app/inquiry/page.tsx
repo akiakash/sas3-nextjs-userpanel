@@ -41,7 +41,7 @@ export default function InquiryPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAFAFC] text-zinc-900">
+    <main className="min-h-screen bg-white text-zinc-900">
       <TopBar />
       <Header />
 

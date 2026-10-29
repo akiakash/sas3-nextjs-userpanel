@@ -54,35 +54,25 @@ export default function Header({
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95 backdrop-blur-xl">
-      <div className="mx-auto grid h-16 max-w-[1440px] grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:h-[4.5rem] sm:gap-5 sm:px-6 lg:px-8">
-        {/* Brand */}
+    <header className="sticky top-0 z-40 border-b border-zinc-100 bg-white/90 backdrop-blur-xl">
+      <div className="mx-auto grid h-[5.25rem] max-w-[1440px] grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:h-[6rem] sm:gap-5 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3">
           <Sas3Logo
-            height={48}
+            height={112}
             priority
-            className="h-10 sm:h-12 lg:h-[3.25rem]"
+            className="h-16 sm:h-[4.5rem] lg:h-20"
             linkTo="/"
           />
-          {/* <div className="hidden border-l border-zinc-200 pl-3 lg:block">
-            <span className="block text-[11px] font-extrabold tracking-[0.14em] text-red-600">
-              SAS3
-            </span>
-            <span className="block text-[10px] font-medium text-zinc-500">
-              Premium Global Import Desk
-            </span>
-          </div> */}
         </div>
 
-        {/* Center nav — desktop */}
         <nav
-          className="hidden items-center justify-center gap-0.5 xl:flex"
+          className="hidden items-center justify-center gap-1 xl:flex"
           aria-label="Primary"
         >
           {navItems.map((item) => {
             const isRoute = item.href.startsWith("/");
             const className =
-              "group inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-[13px] font-semibold text-zinc-700 transition-colors hover:bg-red-50 hover:text-red-700";
+              "group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-medium tracking-wide text-zinc-700 transition-colors hover:bg-red-50 hover:text-red-700";
             const content = (
               <>
                 {item.label}

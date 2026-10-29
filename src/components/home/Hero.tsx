@@ -1,99 +1,82 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Flame, MessageSquare } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+
+const HERO_CAR = "/images/hero-land-cruiser-300.jpg";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[calc(100vh-110px)] flex-col justify-center overflow-hidden border-b border-zinc-200/80 py-10 text-zinc-900 sm:py-14">
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=2000&q=80"
-          className="h-full w-full scale-105 object-cover brightness-100 contrast-100"
-        >
-          <source src="/car.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-black/35" />
-      </div>
+    <section className="relative isolate flex min-h-[calc(100svh-7rem)] flex-col justify-end overflow-hidden bg-zinc-900 text-white">
+      {/* Full-bleed car background */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={HERO_CAR}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 z-0 h-full w-full object-cover object-[center_65%] animate-[hero-car-in_1.1s_ease-out]"
+        fetchPriority="high"
+      />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl rounded-[28px] border border-white/70 bg-white/45 p-6 shadow-[0_30px_70px_rgba(0,0,0,0.18)] backdrop-blur-3xl ring-1 ring-white/60 sm:p-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-white/70 px-3.5 py-1 shadow-sm backdrop-blur-md">
-            <Flame size={13} className="animate-pulse text-red-600" />
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-red-700">
-              SAS3 · Japan auction &amp; export desk
-            </span>
-          </div>
+      {/* Readability overlays — red/white theme wash */}
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-black/55 via-transparent to-black/40" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-1/2 bg-gradient-to-t from-red-950/40 to-transparent" />
 
-          <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
-            Premium Japanese{" "}
-            <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-700 bg-clip-text text-transparent">
-              vehicles
-            </span>{" "}
-            to the world
-          </h1>
+      {/* Soft giant type over the photo */}
+      <p
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[14%] z-[2] w-[140%] -translate-x-1/2 select-none text-center font-[family-name:var(--font-display)] text-[clamp(4.5rem,18vw,14rem)] font-bold leading-none tracking-[-0.04em] text-white/[0.12]"
+      >
+        JAPAN CARS
+      </p>
 
-          <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-zinc-700 sm:text-base">
-            Live USS, JAA &amp; ARAI lots, curated HP stock, and bilingual
-            support from Tokyo — inspected vehicles with worldwide shipping.
+      {/* Content over image */}
+      <div className="relative z-10 mx-auto grid w-full max-w-[1400px] gap-8 px-4 pb-12 pt-28 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:pb-16">
+        <div className="animate-[hero-fade-up_0.8s_ease-out]">
+          <p className="font-[family-name:var(--font-display)] text-sm font-semibold tracking-[0.28em] text-red-400">
+            SAS3
           </p>
+          <h1 className="mt-2 max-w-xl font-[family-name:var(--font-display)] text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Drive the legacy
+            <br />
+            of Japan
+          </h1>
+        </div>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+        <div className="flex flex-col items-start gap-5 animate-[hero-fade-up_0.9s_ease-out] lg:items-end lg:text-right">
+          <p className="max-w-md text-sm leading-relaxed text-white/85 sm:text-base">
+            Live USS, JAA &amp; ARAI auctions, curated HP stock, and bilingual
+            Tokyo support — inspected vehicles shipped worldwide.
+          </p>
+          <div className="flex flex-wrap items-center gap-3 lg:justify-end">
             <Link
               href="/vehicles/auction"
-              className="red-gradient-btn group inline-flex items-center gap-2.5 rounded-xl px-6 py-3.5 text-xs font-extrabold tracking-wider shadow-red-600/40"
+              className="group inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-[0_12px_30px_rgba(220,38,38,0.45)] transition hover:bg-red-500"
             >
               Go to Live Auctions
-              <ArrowRight
+              <ArrowUpRight
                 size={16}
-                className="transition-transform group-hover:translate-x-1"
+                className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </Link>
             <Link
               href="/inquiry"
-              className="inline-flex items-center gap-2 rounded-xl border border-zinc-900/15 bg-white/80 px-5 py-3.5 text-xs font-extrabold tracking-wider text-zinc-900 shadow-sm backdrop-blur-md transition hover:border-red-300 hover:text-red-700"
+              className="group inline-flex items-center gap-2 rounded-full border-2 border-white bg-white/10 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition hover:bg-white hover:text-red-600"
             >
-              <MessageSquare size={15} />
               Send Inquiry
+              <ArrowUpRight
+                size={16}
+                className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
             </Link>
-            <a
-              href="/#featured"
-              className="text-xs font-bold text-zinc-700 underline-offset-4 transition hover:text-red-600 hover:underline"
-            >
-              Browse HP stock
-            </a>
           </div>
-
-          <div className="mt-8 flex flex-wrap gap-6 border-t border-zinc-900/10 pt-5 text-xs text-zinc-800 sm:gap-10">
-            <div>
-              <div className="font-mono text-lg font-extrabold text-zinc-900">
-                150,000+
-              </div>
-              <div className="text-[11px] font-medium text-zinc-600">
-                Weekly Cars
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-lg font-extrabold text-red-600">
-                100%
-              </div>
-              <div className="text-[11px] font-medium text-zinc-600">
-                Inspected
-              </div>
-            </div>
-            <div>
-              <div className="font-mono text-lg font-extrabold text-zinc-900">
-                120+
-              </div>
-              <div className="text-[11px] font-medium text-zinc-600">
-                Global Ports
-              </div>
-            </div>
-          </div>
+          <a
+            href="/#featured"
+            className="text-xs font-semibold text-white/70 underline-offset-4 transition hover:text-white hover:underline"
+          >
+            Browse HP stock
+          </a>
         </div>
       </div>
     </section>

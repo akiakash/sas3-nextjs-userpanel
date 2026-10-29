@@ -17,14 +17,14 @@ const BRANDS = [
 
 export default function Brands() {
   return (
-    <section className="border-b border-zinc-200/80 bg-white py-12 text-zinc-900">
+    <section className="border-y border-red-50 bg-white py-14 text-zinc-900">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
-        <div className="mb-6 text-center">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-red-600">
-            GLOBAL MANUFACTURERS
+        <div className="mb-8 text-center">
+          <span className="text-[11px] font-bold uppercase tracking-[0.28em] text-red-600">
+            Global manufacturers
           </span>
-          <h3 className="mt-0.5 text-xl font-extrabold text-zinc-900 sm:text-2xl">
-            BROWSE BY JAPANESE &amp; EUROPEAN MAKES
+          <h3 className="mt-2 font-[family-name:var(--font-display)] text-3xl tracking-wide text-zinc-900 sm:text-4xl">
+            Browse Japanese &amp; European makes
           </h3>
         </div>
 
@@ -33,18 +33,18 @@ export default function Brands() {
             <Link
               key={b.name}
               href={`/vehicles/auction?make=${encodeURIComponent(b.make)}`}
-              className="group flex flex-col items-center justify-center rounded-2xl border border-zinc-200 bg-white p-4 text-center transition hover:-translate-y-1 hover:border-red-500/40 hover:shadow-md"
+              className="group flex flex-col items-center justify-center rounded-2xl border border-zinc-100 bg-zinc-50/60 p-4 text-center transition hover:-translate-y-1 hover:border-red-200 hover:bg-white hover:shadow-[0_12px_30px_rgba(220,38,38,0.08)]"
             >
               <div className="mb-2 flex h-12 w-12 items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://cdn.simpleicons.org/${b.slug}/18181b`}
+                  src={`https://cdn.simpleicons.org/${b.slug}/dc2626`}
                   alt={`${b.name} logo`}
                   className="h-8 w-auto max-w-[2.5rem] object-contain opacity-90 transition group-hover:opacity-100"
                   loading="lazy"
                 />
               </div>
-              <span className="text-xs font-extrabold tracking-wider text-zinc-900">
+              <span className="text-xs font-bold tracking-wider text-zinc-900">
                 {b.name}
               </span>
               <span className="mt-1 text-[10px] font-medium text-zinc-500">

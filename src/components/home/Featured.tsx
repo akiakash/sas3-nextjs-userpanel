@@ -57,17 +57,17 @@ export default function Featured() {
   return (
     <section
       id="live-auctions"
-      className="relative scroll-mt-12 border-t border-zinc-200/80 bg-zinc-50/50 py-16 text-zinc-900"
+      className="relative scroll-mt-12 border-t border-red-50 bg-red-50/30 py-16 text-zinc-900"
     >
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-red-600">
-              <Flame size={15} className="animate-soft-pulse text-red-600" />{" "}
-              LIVE JAPAN AUCTION LOTS
+            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.28em] text-red-600">
+              <Flame size={14} className="animate-soft-pulse text-red-600" />{" "}
+              Live Japan auction lots
             </div>
-            <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              REAL-TIME BIDDING HALL
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-3xl tracking-wide text-zinc-900 sm:text-5xl">
+              Real-time bidding hall
             </h2>
             <p className="mt-2 max-w-xl text-sm text-zinc-500">
               Real lots synced from USS &amp; JAA halls. Browse the full portal
