@@ -34,6 +34,7 @@ export interface AuctionLot {
   equipmentEn?: string;
   startPrice: string;
   endPrice: string;
+  averagePrice: string;
   resultEn?: string;
   imageUrls: string[];
 }
@@ -95,7 +96,7 @@ export function normalizeAuctionLot(raw: AuctionLotRaw): AuctionLot {
     gradeEn: pickString(raw, ["gradeEn"]),
     colorEn: pickString(raw, ["colorEn"]),
     scoresEn: pickString(raw, ["scoresEn"]),
-    modelYearEn: pickString(raw, ["modelYearEn"]),
+    modelYearEn: pickString(raw, ["modelYearEn"]).trim(),
     mileage: pickNumberString(raw, ["mileageNum", "mileage", "mileageEn"]),
     displacement: pickNumberString(raw, [
       "displacementNum",
@@ -110,6 +111,7 @@ export function normalizeAuctionLot(raw: AuctionLotRaw): AuctionLot {
       "startPriceNum",
     ]),
     endPrice: pickNumberString(raw, ["endPriceEn", "endPrice", "endPriceNum"]),
+    averagePrice: pickNumberString(raw, ["averagePrice", "average_price"]),
     resultEn: pickString(raw, ["resultEn"]) || undefined,
     imageUrls: pickImageUrls(raw),
   };

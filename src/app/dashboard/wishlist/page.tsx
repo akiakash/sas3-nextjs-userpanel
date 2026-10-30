@@ -39,6 +39,7 @@ function toAuctionLot(item: CustomerWishlistItem): AuctionLot {
     equipmentEn: item.equipmentEn || undefined,
     startPrice: item.startPrice || "",
     endPrice: item.endPrice || "",
+    averagePrice: "",
     resultEn: item.resultEn || undefined,
     imageUrls: item.imageUrls ?? [],
   };

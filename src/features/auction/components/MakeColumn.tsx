@@ -6,6 +6,7 @@
 'use client';
 
 import React from 'react';
+import { formatMakeLabel } from '../auction-utils';
 
 export function MakeColumn({
   options,
@@ -35,7 +36,7 @@ export function MakeColumn({
                   className={`auction-legacy-make-item${active ? ' active' : ''}`}
                   onClick={() => onSelect(opt)}
                 >
-                  {opt.charAt(0) + opt.slice(1).toLowerCase()}
+                  {formatMakeLabel(opt)}
                 </button>
               );
             })

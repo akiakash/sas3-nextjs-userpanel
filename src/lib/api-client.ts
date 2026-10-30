@@ -81,7 +81,12 @@ export async function apiClient<T>(
 
   if (!response.ok) {
     if (response.status === 401 && !skipAuthRedirect) {
-      redirectToLoginOnUnauthorized();
+      // Only kick the user out if this request used the *current* token.
+      // Avoids a race where a stale /me 401 clears a just-completed login.
+      const current = getStoredToken();
+      if (authToken && current && authToken === current) {
+        redirectToLoginOnUnauthorized();
+      }
     }
 
     const message =

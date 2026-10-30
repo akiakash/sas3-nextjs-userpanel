@@ -14,11 +14,42 @@ export function clearSessionCookie(): void {
   document.cookie = `${CUSTOMER_SESSION_COOKIE}=; path=/; max-age=0`;
 }
 
+/** Client + server cookie so middleware accepts the next navigation. */
+export async function syncSessionCookie(): Promise<void> {
+  if (typeof window === "undefined") return;
+  if (!localStorage.getItem(CUSTOMER_TOKEN_KEY)) return;
+  setSessionCookie();
+  try {
+    await fetch("/api/customer-session", {
+      method: "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+  } catch {
+    // document.cookie above is the fallback
+  }
+}
+
+export async function clearSessionCookieRemote(): Promise<void> {
+  clearSessionCookie();
+  if (typeof window === "undefined") return;
+  try {
+    await fetch("/api/customer-session", {
+      method: "DELETE",
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+  } catch {
+    // ignore
+  }
+}
+
 /** Restore session cookie when localStorage still has a token. */
 export function ensureSessionCookie(): void {
   if (typeof localStorage === "undefined" || typeof document === "undefined") return;
   if (!localStorage.getItem(CUSTOMER_TOKEN_KEY)) return;
   setSessionCookie();
+  void syncSessionCookie();
 }
 
 export function clearCustomerSession(): void {
@@ -26,6 +57,7 @@ export function clearCustomerSession(): void {
   if (typeof localStorage !== "undefined") {
     localStorage.removeItem(CUSTOMER_TOKEN_KEY);
   }
+  void clearSessionCookieRemote();
 }
 
 export function setCustomerSession(token: string): void {
